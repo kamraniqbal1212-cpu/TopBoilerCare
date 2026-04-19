@@ -18,85 +18,48 @@
   --sidebar: 260px;
 }
 body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: var(--gray-800); min-height: 100vh; }
-/* SIDEBAR */
-.sidebar {
-  position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar);
-  background: var(--black); padding: 28px 20px;
-  display: flex; flex-direction: column; z-index: 100;
-  border-right: 1px solid rgba(255,255,255,0.06);
-}
+.sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar); background: var(--black); padding: 28px 20px; display: flex; flex-direction: column; z-index: 100; border-right: 1px solid rgba(255,255,255,0.06); }
 .sidebar-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--white); margin-bottom: 4px; }
 .sidebar-logo span { color: var(--yellow); }
 .sidebar-role { font-size: 0.78rem; color: var(--gray-600); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.08em; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 14px; border-radius: var(--radius);
-  color: var(--gray-400); font-size: 0.9rem; font-weight: 500;
-  cursor: pointer; transition: all var(--transition); margin-bottom: 4px;
-  border: none; background: none; width: 100%; text-align: left;
-}
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius); color: var(--gray-400); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition); margin-bottom: 4px; border: none; background: none; width: 100%; text-align: left; }
 .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--white); }
 .nav-item.active { background: var(--yellow-dim); color: var(--yellow); }
 .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
 .sidebar-bottom { margin-top: auto; }
-.btn-signout {
-  width: 100%; padding: 10px 14px; background: none;
-  border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius);
-  color: var(--gray-400); font-size: 0.88rem; cursor: pointer;
-  transition: all var(--transition); font-family: 'DM Sans', sans-serif;
-}
+.btn-signout { width: 100%; padding: 10px 14px; background: none; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); color: var(--gray-400); font-size: 0.88rem; cursor: pointer; transition: all var(--transition); font-family: 'DM Sans', sans-serif; }
 .btn-signout:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
-/* MAIN */
 .main { margin-left: var(--sidebar); padding: 32px; min-height: 100vh; }
 .page-header { margin-bottom: 28px; }
 .page-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.6rem; color: var(--black); font-weight: 800; letter-spacing: -0.02em; }
 .page-subtitle { font-size: 0.9rem; color: var(--gray-600); margin-top: 4px; }
-/* STATS */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-.stat-card {
-  background: var(--white); border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg); padding: 24px 20px;
-}
+.stat-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 24px 20px; }
 .stat-label { font-size: 0.8rem; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
 .stat-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2rem; font-weight: 800; color: var(--black); }
-.stat-value.yellow { color: var(--yellow); }
 .stat-value.blue { color: var(--blue); }
 .stat-value.red { color: #ef4444; }
-/* SECTIONS */
 .section { display: none; }
 .section.active { display: block; }
-/* CARDS */
-.card {
-  background: var(--white); border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg); overflow: hidden;
-}
-.card-header {
-  padding: 20px 24px; border-bottom: 1px solid var(--gray-200);
-  display: flex; justify-content: space-between; align-items: center;
-}
+.card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); overflow: hidden; }
+.card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
 .card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: var(--black); }
-/* TABLE */
 table { width: 100%; border-collapse: collapse; }
 th { padding: 12px 16px; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); }
 td { padding: 14px 16px; font-size: 0.9rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--gray-100); }
-/* BADGES */
 .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
 .badge-scheduled { background: rgba(45,127,249,0.1); color: var(--blue); }
 .badge-completed { background: rgba(34,197,94,0.1); color: #16a34a; }
 .badge-unpaid { background: rgba(239,68,68,0.1); color: #ef4444; }
 .badge-paid { background: rgba(34,197,94,0.1); color: #16a34a; }
-/* BUTTONS */
 .btn { padding: 8px 16px; border-radius: var(--radius); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all var(--transition); font-family: 'DM Sans', sans-serif; border: none; }
 .btn-primary { background: var(--yellow); color: var(--black); }
 .btn-primary:hover { background: var(--yellow-hover); }
 .btn-sm { padding: 5px 12px; font-size: 0.8rem; }
 .btn-ghost { background: var(--gray-100); color: var(--gray-800); }
 .btn-ghost:hover { background: var(--gray-200); }
-.btn-danger { background: rgba(239,68,68,0.1); color: #ef4444; }
-.btn-danger:hover { background: rgba(239,68,68,0.2); }
-/* MODAL */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; justify-content: center; align-items: center; padding: 24px; }
 .modal-overlay.active { display: flex; }
 .modal { background: var(--white); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.18); }
@@ -107,11 +70,7 @@ tr:hover td { background: var(--gray-100); }
 .modal-body { padding: 24px 28px 28px; }
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 0.83rem; font-weight: 600; color: var(--gray-800); margin-bottom: 6px; }
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%; padding: 11px 14px; border: 1px solid var(--gray-200);
-  border-radius: var(--radius); font-size: 0.92rem; font-family: 'DM Sans', sans-serif;
-  color: var(--gray-800); background: var(--white); transition: border-color var(--transition);
-}
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px 14px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 0.92rem; font-family: 'DM Sans', sans-serif; color: var(--gray-800); background: var(--white); transition: border-color var(--transition); }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(45,127,249,0.1); }
 .form-group select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%239e9e9e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
 .form-group textarea { resize: vertical; min-height: 80px; }
@@ -120,29 +79,31 @@ tr:hover td { background: var(--gray-100); }
 .empty-state { padding: 48px 24px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
 .loading { padding: 32px; text-align: center; color: var(--gray-400); }
 .action-btns { display: flex; gap: 6px; }
+.alert { padding: 12px 16px; border-radius: var(--radius); font-size: 0.88rem; margin-bottom: 16px; display: none; }
+.alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
   <div>
     <div class="sidebar-logo">Top Boiler <span>Care</span></div>
     <div class="sidebar-role">Admin</div>
-    <button class="nav-item active" onclick="showSection('jobs')">
+    <button class="nav-item active" id="nav-jobs" onclick="showSection('jobs', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       Jobs
     </button>
-    <button class="nav-item" onclick="showSection('agencies')">
+    <button class="nav-item" id="nav-agencies" onclick="showSection('agencies', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Agencies
     </button>
-    <button class="nav-item" onclick="showSection('engineers')">
+    <button class="nav-item" id="nav-engineers" onclick="showSection('engineers', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Engineers
     </button>
-    <button class="nav-item" onclick="showSection('invoices')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <button class="nav-item" id="nav-invoices" onclick="showSection('invoices', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       Invoices
     </button>
   </div>
@@ -151,16 +112,14 @@ tr:hover td { background: var(--gray-100); }
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-  <!-- JOBS SECTION -->
   <div class="section active" id="section-jobs">
     <div class="page-header">
       <div class="page-title">Jobs</div>
       <div class="page-subtitle">All jobs across all agencies</div>
     </div>
-    <div class="stats-grid" id="statsGrid">
+    <div class="stats-grid">
       <div class="stat-card"><div class="stat-label">Total Jobs</div><div class="stat-value" id="statTotal">-</div></div>
       <div class="stat-card"><div class="stat-label">Scheduled</div><div class="stat-value blue" id="statScheduled">-</div></div>
       <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="statCompleted">-</div></div>
@@ -175,11 +134,10 @@ tr:hover td { background: var(--gray-100); }
     </div>
   </div>
 
-  <!-- AGENCIES SECTION -->
   <div class="section" id="section-agencies">
     <div class="page-header">
       <div class="page-title">Agencies</div>
-      <div class="page-subtitle">Manage agency accounts</div>
+      <div class="page-subtitle">Manage agency accounts and portal access</div>
     </div>
     <div class="card">
       <div class="card-header">
@@ -190,7 +148,6 @@ tr:hover td { background: var(--gray-100); }
     </div>
   </div>
 
-  <!-- ENGINEERS SECTION -->
   <div class="section" id="section-engineers">
     <div class="page-header">
       <div class="page-title">Engineers</div>
@@ -205,16 +162,13 @@ tr:hover td { background: var(--gray-100); }
     </div>
   </div>
 
-  <!-- INVOICES SECTION -->
   <div class="section" id="section-invoices">
     <div class="page-header">
       <div class="page-title">Invoices</div>
       <div class="page-subtitle">Track all invoice payments</div>
     </div>
     <div class="card">
-      <div class="card-header">
-        <span class="card-title">All Invoices</span>
-      </div>
+      <div class="card-header"><span class="card-title">All Invoices</span></div>
       <div id="invoicesTable"><div class="loading">Loading invoices...</div></div>
     </div>
   </div>
@@ -312,6 +266,8 @@ tr:hover td { background: var(--gray-100); }
       <button class="modal-close" onclick="closeModal('addAgencyModal')">✕</button>
     </div>
     <div class="modal-body">
+      <div class="alert alert-error" id="agencyError"></div>
+      <div class="alert alert-success" id="agencySuccess"></div>
       <div class="form-group">
         <label>Agency Name *</label>
         <input type="text" id="agencyName" placeholder="Smith & Co Estate Agents">
@@ -331,7 +287,7 @@ tr:hover td { background: var(--gray-100); }
         <input type="email" id="agencyEmail" placeholder="jane@smithco.com">
       </div>
       <div class="form-group">
-        <label>Portal Login Email (for agency access)</label>
+        <label>Portal Login Email</label>
         <input type="email" id="agencyLoginEmail" placeholder="portal@smithco.com">
       </div>
       <div class="form-group">
@@ -354,6 +310,7 @@ tr:hover td { background: var(--gray-100); }
       <button class="modal-close" onclick="closeModal('addEngineerModal')">✕</button>
     </div>
     <div class="modal-body">
+      <div class="alert alert-error" id="engineerError"></div>
       <div class="form-row">
         <div class="form-group">
           <label>Full Name *</label>
@@ -387,12 +344,11 @@ tr:hover td { background: var(--gray-100); }
 <script>
 var SUPABASE_URL = 'https://metssgddcebwfmpfeipj.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ldHNzZ2RkY2Vid2ZtcGZlaXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTU0MDgsImV4cCI6MjA5MjE5MTQwOH0.xwNi1fuQMQD1q-iLHBbmsbCdGAHWY0BD-Al9_2mt4L8';
+var EDGE_FN_URL = 'https://metssgddcebwfmpfeipj.supabase.co/functions/v1/create-user';
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 var agencies = [];
 var engineers = [];
 
-// Auth check
 supabase.auth.getSession().then(function(res) {
   if (!res.data.session) { window.location.href = '/portal/index.html'; return; }
   supabase.from('profiles').select('role').eq('id', res.data.session.user.id).single()
@@ -402,21 +358,16 @@ supabase.auth.getSession().then(function(res) {
     });
 });
 
-function loadAll() {
-  loadJobs();
-  loadAgencies();
-  loadEngineers();
-}
+function loadAll() { loadJobs(); loadAgencies(); loadEngineers(); }
 
-function showSection(name) {
+function showSection(name, el) {
   document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
   document.getElementById('section-' + name).classList.add('active');
-  event.currentTarget.classList.add('active');
+  el.classList.add('active');
   if (name === 'invoices') loadInvoices();
 }
 
-// JOBS
 function loadJobs() {
   supabase.from('jobs').select('*, agencies(name), engineers(full_name)').order('created_at', { ascending: false })
     .then(function(res) {
@@ -444,8 +395,7 @@ function loadJobs() {
         if (j.invoice_status === 'unpaid' && j.status === 'completed') {
           html += '<button class="btn btn-sm btn-primary" onclick="markPaid(\'' + j.id + '\')">Mark Paid</button>';
         }
-        html += '</div></td>';
-        html += '</tr>';
+        html += '</div></td></tr>';
       });
       html += '</tbody></table>';
       document.getElementById('jobsTable').innerHTML = html;
@@ -502,7 +452,6 @@ function saveJob() {
   btn.disabled = true; btn.textContent = 'Saving...';
   var jobId = document.getElementById('jobId').value;
   var invoiceFile = document.getElementById('jobInvoiceFile').files[0];
-
   var data = {
     agency_id: document.getElementById('jobAgency').value || null,
     engineer_id: document.getElementById('jobEngineer').value || null,
@@ -516,56 +465,56 @@ function saveJob() {
     invoice_status: document.getElementById('jobInvoiceStatus').value,
     notes: document.getElementById('jobNotes').value.trim() || null
   };
-
   if (!data.property_address) { alert('Property address is required.'); btn.disabled = false; btn.textContent = 'Save Job'; return; }
 
   function doSave(invoiceUrl) {
     if (invoiceUrl) data.invoice_url = invoiceUrl;
-    var query = jobId
-      ? supabase.from('jobs').update(data).eq('id', jobId)
-      : supabase.from('jobs').insert(data);
+    var query = jobId ? supabase.from('jobs').update(data).eq('id', jobId) : supabase.from('jobs').insert(data);
     query.then(function(res) {
       btn.disabled = false; btn.textContent = 'Save Job';
       if (res.error) { alert('Error saving job: ' + res.error.message); return; }
-      closeModal('addJobModal');
-      loadJobs();
+      closeModal('addJobModal'); loadJobs();
     });
   }
 
   if (invoiceFile) {
     var path = 'invoices/' + Date.now() + '_' + invoiceFile.name;
-    supabase.storage.from('invoices').upload(path, invoiceFile)
-      .then(function(res) {
-        if (res.error) { alert('Error uploading invoice: ' + res.error.message); btn.disabled = false; btn.textContent = 'Save Job'; return; }
-        var url = supabase.storage.from('invoices').getPublicUrl(path).data.publicUrl;
-        doSave(url);
-      });
-  } else {
-    doSave(null);
-  }
+    supabase.storage.from('invoices').upload(path, invoiceFile).then(function(res) {
+      if (res.error) { alert('Error uploading invoice: ' + res.error.message); btn.disabled = false; btn.textContent = 'Save Job'; return; }
+      var url = supabase.storage.from('invoices').getPublicUrl(path).data.publicUrl;
+      doSave(url);
+    });
+  } else { doSave(null); }
 }
 
 function markPaid(jobId) {
-  supabase.from('jobs').update({ invoice_status: 'paid' }).eq('id', jobId)
-    .then(function() { loadJobs(); });
+  supabase.from('jobs').update({ invoice_status: 'paid' }).eq('id', jobId).then(function() { loadJobs(); });
 }
 
-// AGENCIES
 function loadAgencies() {
-  supabase.from('agencies').select('*').order('name')
-    .then(function(res) {
-      agencies = res.data || [];
-      if (!agencies.length) { document.getElementById('agenciesTable').innerHTML = '<div class="empty-state">No agencies yet.</div>'; return; }
-      var html = '<table><thead><tr><th>Name</th><th>Contact</th><th>Email</th><th>Phone</th></tr></thead><tbody>';
-      agencies.forEach(function(a) {
-        html += '<tr><td>' + a.name + '</td><td>' + (a.contact_name || '-') + '</td><td>' + (a.contact_email || '-') + '</td><td>' + (a.contact_phone || '-') + '</td></tr>';
-      });
-      html += '</tbody></table>';
-      document.getElementById('agenciesTable').innerHTML = html;
+  supabase.from('agencies').select('*').order('name').then(function(res) {
+    agencies = res.data || [];
+    if (!agencies.length) { document.getElementById('agenciesTable').innerHTML = '<div class="empty-state">No agencies yet.</div>'; return; }
+    var html = '<table><thead><tr><th>Name</th><th>Contact</th><th>Email</th><th>Phone</th></tr></thead><tbody>';
+    agencies.forEach(function(a) {
+      html += '<tr><td>' + a.name + '</td><td>' + (a.contact_name || '-') + '</td><td>' + (a.contact_email || '-') + '</td><td>' + (a.contact_phone || '-') + '</td></tr>';
     });
+    html += '</tbody></table>';
+    document.getElementById('agenciesTable').innerHTML = html;
+  });
 }
 
-function openAddAgency() { openModal('addAgencyModal'); }
+function openAddAgency() {
+  document.getElementById('agencyName').value = '';
+  document.getElementById('agencyContact').value = '';
+  document.getElementById('agencyPhone').value = '';
+  document.getElementById('agencyEmail').value = '';
+  document.getElementById('agencyLoginEmail').value = '';
+  document.getElementById('agencyLoginPassword').value = '';
+  document.getElementById('agencyError').style.display = 'none';
+  document.getElementById('agencySuccess').style.display = 'none';
+  openModal('addAgencyModal');
+}
 
 function saveAgency() {
   var btn = document.getElementById('saveAgencyBtn');
@@ -573,7 +522,15 @@ function saveAgency() {
   var name = document.getElementById('agencyName').value.trim();
   var loginEmail = document.getElementById('agencyLoginEmail').value.trim();
   var loginPassword = document.getElementById('agencyLoginPassword').value;
-  if (!name) { alert('Agency name is required.'); btn.disabled = false; btn.textContent = 'Add Agency'; return; }
+  var errorEl = document.getElementById('agencyError');
+  var successEl = document.getElementById('agencySuccess');
+
+  if (!name) {
+    errorEl.textContent = 'Agency name is required.';
+    errorEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Add Agency';
+    return;
+  }
 
   supabase.from('agencies').insert({
     name: name,
@@ -581,18 +538,48 @@ function saveAgency() {
     contact_email: document.getElementById('agencyEmail').value.trim() || null,
     contact_phone: document.getElementById('agencyPhone').value.trim() || null
   }).select().then(function(res) {
-    if (res.error) { alert('Error: ' + res.error.message); btn.disabled = false; btn.textContent = 'Add Agency'; return; }
+    if (res.error) {
+      errorEl.textContent = 'Error: ' + res.error.message;
+      errorEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Add Agency';
+      return;
+    }
     var agencyId = res.data[0].id;
+
     if (loginEmail && loginPassword) {
-      supabase.auth.admin.createUser({ email: loginEmail, password: loginPassword, email_confirm: true })
-        .then(function(userRes) {
-          if (userRes.error) { alert('Agency added but portal login failed: ' + userRes.error.message); }
-          else {
-            supabase.from('profiles').insert({ id: userRes.data.user.id, full_name: name, role: 'agency', agency_id: agencyId }).then(function() {});
-          }
+      supabase.auth.getSession().then(function(s) {
+        fetch(EDGE_FN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + s.data.session.access_token
+          },
+          body: JSON.stringify({
+            email: loginEmail,
+            password: loginPassword,
+            role: 'agency',
+            full_name: name,
+            agency_id: agencyId
+          })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
           btn.disabled = false; btn.textContent = 'Add Agency';
-          closeModal('addAgencyModal'); loadAgencies();
+          if (data.error) {
+            errorEl.textContent = 'Agency added but portal login failed: ' + data.error;
+            errorEl.style.display = 'block';
+          } else {
+            successEl.textContent = 'Agency added successfully with portal access.';
+            successEl.style.display = 'block';
+            setTimeout(function() { closeModal('addAgencyModal'); loadAgencies(); }, 1500);
+          }
+        })
+        .catch(function(err) {
+          errorEl.textContent = 'Network error: ' + err.message;
+          errorEl.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'Add Agency';
         });
+      });
     } else {
       btn.disabled = false; btn.textContent = 'Add Agency';
       closeModal('addAgencyModal'); loadAgencies();
@@ -600,22 +587,28 @@ function saveAgency() {
   });
 }
 
-// ENGINEERS
 function loadEngineers() {
-  supabase.from('engineers').select('*').order('full_name')
-    .then(function(res) {
-      engineers = res.data || [];
-      if (!engineers.length) { document.getElementById('engineersTable').innerHTML = '<div class="empty-state">No engineers yet.</div>'; return; }
-      var html = '<table><thead><tr><th>Name</th><th>Phone</th><th>Gas Safe No.</th></tr></thead><tbody>';
-      engineers.forEach(function(e) {
-        html += '<tr><td>' + e.full_name + '</td><td>' + (e.phone || '-') + '</td><td>' + (e.gas_safe_number || '-') + '</td></tr>';
-      });
-      html += '</tbody></table>';
-      document.getElementById('engineersTable').innerHTML = html;
+  supabase.from('engineers').select('*').order('full_name').then(function(res) {
+    engineers = res.data || [];
+    if (!engineers.length) { document.getElementById('engineersTable').innerHTML = '<div class="empty-state">No engineers yet.</div>'; return; }
+    var html = '<table><thead><tr><th>Name</th><th>Phone</th><th>Gas Safe No.</th></tr></thead><tbody>';
+    engineers.forEach(function(e) {
+      html += '<tr><td>' + e.full_name + '</td><td>' + (e.phone || '-') + '</td><td>' + (e.gas_safe_number || '-') + '</td></tr>';
     });
+    html += '</tbody></table>';
+    document.getElementById('engineersTable').innerHTML = html;
+  });
 }
 
-function openAddEngineer() { openModal('addEngineerModal'); }
+function openAddEngineer() {
+  document.getElementById('engName').value = '';
+  document.getElementById('engPhone').value = '';
+  document.getElementById('engGasSafe').value = '';
+  document.getElementById('engEmail').value = '';
+  document.getElementById('engPassword').value = '';
+  document.getElementById('engineerError').style.display = 'none';
+  openModal('addEngineerModal');
+}
 
 function saveEngineer() {
   var btn = document.getElementById('saveEngineerBtn');
@@ -623,28 +616,55 @@ function saveEngineer() {
   var name = document.getElementById('engName').value.trim();
   var email = document.getElementById('engEmail').value.trim();
   var password = document.getElementById('engPassword').value;
-  if (!name) { alert('Name is required.'); btn.disabled = false; btn.textContent = 'Add Engineer'; return; }
+  var errorEl = document.getElementById('engineerError');
 
-  supabase.auth.admin.createUser({ email: email, password: password, email_confirm: true })
-    .then(function(userRes) {
-      if (userRes.error) { alert('Error creating login: ' + userRes.error.message); btn.disabled = false; btn.textContent = 'Add Engineer'; return; }
-      var userId = userRes.data.user.id;
-      supabase.from('profiles').insert({ id: userId, full_name: name, role: 'engineer' })
-        .then(function() {
-          supabase.from('engineers').insert({
-            user_id: userId,
-            full_name: name,
-            phone: document.getElementById('engPhone').value.trim() || null,
-            gas_safe_number: document.getElementById('engGasSafe').value.trim() || null
-          }).then(function() {
-            btn.disabled = false; btn.textContent = 'Add Engineer';
-            closeModal('addEngineerModal'); loadEngineers();
-          });
-        });
+  if (!name) {
+    errorEl.textContent = 'Name is required.';
+    errorEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Add Engineer';
+    return;
+  }
+
+  supabase.auth.getSession().then(function(s) {
+    fetch(EDGE_FN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + s.data.session.access_token
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        role: 'engineer',
+        full_name: name
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) {
+        errorEl.textContent = 'Error creating login: ' + data.error;
+        errorEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Add Engineer';
+        return;
+      }
+      supabase.from('engineers').insert({
+        user_id: data.user_id,
+        full_name: name,
+        phone: document.getElementById('engPhone').value.trim() || null,
+        gas_safe_number: document.getElementById('engGasSafe').value.trim() || null
+      }).then(function() {
+        btn.disabled = false; btn.textContent = 'Add Engineer';
+        closeModal('addEngineerModal'); loadEngineers();
+      });
+    })
+    .catch(function(err) {
+      errorEl.textContent = 'Network error: ' + err.message;
+      errorEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Add Engineer';
     });
+  });
 }
 
-// INVOICES
 function loadInvoices() {
   supabase.from('jobs').select('*, agencies(name)').not('invoice_url', 'is', null).order('created_at', { ascending: false })
     .then(function(res) {
@@ -652,19 +672,11 @@ function loadInvoices() {
       if (!jobs.length) { document.getElementById('invoicesTable').innerHTML = '<div class="empty-state">No invoices yet.</div>'; return; }
       var html = '<table><thead><tr><th>Address</th><th>Agency</th><th>Date</th><th>Price</th><th>Invoice</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
       jobs.forEach(function(j) {
-        html += '<tr>';
-        html += '<td>' + j.property_address + '</td>';
-        html += '<td>' + (j.agencies ? j.agencies.name : '-') + '</td>';
-        html += '<td>' + (j.job_date || '-') + '</td>';
-        html += '<td>' + (j.price ? '£' + j.price : '-') + '</td>';
-        html += '<td><a href="' + j.invoice_url + '" target="_blank" class="btn btn-sm btn-ghost">View PDF</a></td>';
-        html += '<td><span class="badge badge-' + j.invoice_status + '">' + j.invoice_status + '</span></td>';
-        html += '<td>';
+        html += '<tr><td>' + j.property_address + '</td><td>' + (j.agencies ? j.agencies.name : '-') + '</td><td>' + (j.job_date || '-') + '</td><td>' + (j.price ? '£' + j.price : '-') + '</td><td><a href="' + j.invoice_url + '" target="_blank" class="btn btn-sm btn-ghost">View PDF</a></td><td><span class="badge badge-' + j.invoice_status + '">' + j.invoice_status + '</span></td><td>';
         if (j.invoice_status === 'unpaid') {
           html += '<button class="btn btn-sm btn-primary" onclick="markPaid(\'' + j.id + '\')">Mark Paid</button>';
         }
-        html += '</td>';
-        html += '</tr>';
+        html += '</td></tr>';
       });
       html += '</tbody></table>';
       document.getElementById('invoicesTable').innerHTML = html;
