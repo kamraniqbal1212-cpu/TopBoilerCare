@@ -13,6 +13,7 @@
   --yellow: #f5c518; --yellow-hover: #ffd740; --yellow-dim: rgba(245,197,24,0.08);
   --blue: #2d7ff9; --white: #ffffff; --gray-100: #f5f5f5; --gray-200: #e0e0e0;
   --gray-400: #9e9e9e; --gray-600: #6b6b6b; --gray-800: #333333;
+  --red: #ef4444; --red-dim: rgba(239,68,68,0.1);
   --radius: 10px; --radius-lg: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.12);
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --sidebar: 260px;
@@ -21,7 +22,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: v
 .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar); background: var(--black); padding: 28px 20px; display: flex; flex-direction: column; z-index: 100; border-right: 1px solid rgba(255,255,255,0.06); }
 .sidebar-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--white); margin-bottom: 4px; }
 .sidebar-logo span { color: var(--yellow); }
-.sidebar-role { font-size: 0.78rem; color: var(--gray-600); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.08em; }
+.sidebar-role { font-size: 0.78rem; color: var(--gray-600); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.08em; }
+.live-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--gray-400); background: rgba(255,255,255,0.05); border-radius: 100px; padding: 3px 10px; margin-bottom: 24px; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 0 rgba(34,197,94,0.6); animation: pulse 2s infinite; }
+.live-dot.off { background: var(--gray-600); animation: none; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); } 70% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
 .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius); color: var(--gray-400); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition); margin-bottom: 4px; border: none; background: none; width: 100%; text-align: left; }
 .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--white); }
 .nav-item.active { background: var(--yellow-dim); color: var(--yellow); }
@@ -38,31 +43,35 @@ body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: v
 .stat-label { font-size: 0.8rem; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
 .stat-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2rem; font-weight: 800; color: var(--black); }
 .stat-value.blue { color: var(--blue); }
-.stat-value.red { color: #ef4444; }
+.stat-value.red { color: var(--red); }
 .section { display: none; }
 .section.active { display: block; }
 .card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); overflow: hidden; }
-.card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+.card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: var(--black); }
+.table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
-th { padding: 12px 16px; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); }
-td { padding: 14px 16px; font-size: 0.9rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); }
+th { padding: 12px 16px; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+td { padding: 14px 16px; font-size: 0.9rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--gray-100); }
 .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
 .badge-scheduled { background: rgba(45,127,249,0.1); color: var(--blue); }
 .badge-completed { background: rgba(34,197,94,0.1); color: #16a34a; }
-.badge-unpaid { background: rgba(239,68,68,0.1); color: #ef4444; }
+.badge-unpaid { background: var(--red-dim); color: var(--red); }
 .badge-paid { background: rgba(34,197,94,0.1); color: #16a34a; }
-.btn { padding: 8px 16px; border-radius: var(--radius); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all var(--transition); font-family: 'DM Sans', sans-serif; border: none; }
+.btn { padding: 8px 16px; border-radius: var(--radius); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all var(--transition); font-family: 'DM Sans', sans-serif; border: none; display: inline-flex; align-items: center; gap: 6px; }
 .btn-primary { background: var(--yellow); color: var(--black); }
 .btn-primary:hover { background: var(--yellow-hover); }
-.btn-sm { padding: 5px 12px; font-size: 0.8rem; }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-sm { padding: 5px 11px; font-size: 0.78rem; }
 .btn-ghost { background: var(--gray-100); color: var(--gray-800); }
 .btn-ghost:hover { background: var(--gray-200); }
+.btn-danger { background: var(--red-dim); color: var(--red); }
+.btn-danger:hover { background: var(--red); color: var(--white); }
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; justify-content: center; align-items: center; padding: 24px; }
 .modal-overlay.active { display: flex; }
-.modal { background: var(--white); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.18); }
+.modal { background: var(--white); border-radius: var(--radius-lg); width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.18); }
 .modal-header { padding: 24px 28px 0; display: flex; justify-content: space-between; align-items: center; }
 .modal-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 700; }
 .modal-close { background: var(--gray-100); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
@@ -76,12 +85,19 @@ tr:hover td { background: var(--gray-100); }
 .form-group textarea { resize: vertical; min-height: 80px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-actions { display: flex; gap: 10px; margin-top: 4px; }
+.form-section-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-600); margin: 8px 0 12px; padding-top: 12px; border-top: 1px solid var(--gray-200); }
 .empty-state { padding: 48px 24px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
 .loading { padding: 32px; text-align: center; color: var(--gray-400); }
-.action-btns { display: flex; gap: 6px; }
-.alert { padding: 12px 16px; border-radius: var(--radius); font-size: 0.88rem; margin-bottom: 16px; display: none; }
+.action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.alert { padding: 12px 16px; border-radius: var(--radius); font-size: 0.88rem; margin-bottom: 16px; display: none; line-height: 1.45; }
 .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
 .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: var(--white); padding: 14px 20px; border-radius: var(--radius); font-size: 0.9rem; font-weight: 500; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transform: translateY(calc(100% + 40px)); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+.toast.show { transform: translateY(0); }
+.toast.success { background: #16a34a; }
+.toast.error { background: var(--red); }
+.link-btn { background: none; border: none; color: var(--blue); font-size: 0.85rem; cursor: pointer; font-weight: 500; padding: 0; text-decoration: underline; font-family: inherit; }
+.link-btn:hover { color: #1b5fd0; }
 </style>
 </head>
 <body>
@@ -90,6 +106,7 @@ tr:hover td { background: var(--gray-100); }
   <div>
     <div class="sidebar-logo">Top Boiler <span>Care</span></div>
     <div class="sidebar-role">Admin</div>
+    <div class="live-chip"><span class="live-dot off" id="liveDot"></span><span id="liveLabel">Connecting...</span></div>
     <button class="nav-item active" id="nav-jobs" onclick="showSection('jobs', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       Jobs
@@ -130,35 +147,35 @@ tr:hover td { background: var(--gray-100); }
         <span class="card-title">All Jobs</span>
         <button class="btn btn-primary" onclick="openAddJob()">+ Add Job</button>
       </div>
-      <div id="jobsTable"><div class="loading">Loading jobs...</div></div>
+      <div class="table-wrap" id="jobsTable"><div class="loading">Loading jobs...</div></div>
     </div>
   </div>
 
   <div class="section" id="section-agencies">
     <div class="page-header">
       <div class="page-title">Agencies</div>
-      <div class="page-subtitle">Manage agency accounts and portal access</div>
+      <div class="page-subtitle">Add an agency and its portal login in one go</div>
     </div>
     <div class="card">
       <div class="card-header">
         <span class="card-title">All Agencies</span>
         <button class="btn btn-primary" onclick="openAddAgency()">+ Add Agency</button>
       </div>
-      <div id="agenciesTable"><div class="loading">Loading agencies...</div></div>
+      <div class="table-wrap" id="agenciesTable"><div class="loading">Loading agencies...</div></div>
     </div>
   </div>
 
   <div class="section" id="section-engineers">
     <div class="page-header">
       <div class="page-title">Engineers</div>
-      <div class="page-subtitle">Manage engineer accounts</div>
+      <div class="page-subtitle">Add an engineer and their portal login in one go</div>
     </div>
     <div class="card">
       <div class="card-header">
         <span class="card-title">All Engineers</span>
         <button class="btn btn-primary" onclick="openAddEngineer()">+ Add Engineer</button>
       </div>
-      <div id="engineersTable"><div class="loading">Loading engineers...</div></div>
+      <div class="table-wrap" id="engineersTable"><div class="loading">Loading engineers...</div></div>
     </div>
   </div>
 
@@ -169,20 +186,21 @@ tr:hover td { background: var(--gray-100); }
     </div>
     <div class="card">
       <div class="card-header"><span class="card-title">All Invoices</span></div>
-      <div id="invoicesTable"><div class="loading">Loading invoices...</div></div>
+      <div class="table-wrap" id="invoicesTable"><div class="loading">Loading invoices...</div></div>
     </div>
   </div>
 
 </div>
 
-<!-- ADD JOB MODAL -->
+<!-- ADD/EDIT JOB MODAL -->
 <div class="modal-overlay" id="addJobModal">
   <div class="modal">
     <div class="modal-header">
       <h3 id="jobModalTitle">Add New Job</h3>
-      <button class="modal-close" onclick="closeModal('addJobModal')">✕</button>
+      <button class="modal-close" onclick="closeModal('addJobModal')">&times;</button>
     </div>
     <div class="modal-body">
+      <div class="alert alert-error" id="jobError"></div>
       <input type="hidden" id="jobId">
       <div class="form-row">
         <div class="form-group">
@@ -224,8 +242,8 @@ tr:hover td { background: var(--gray-100); }
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Price (£)</label>
-          <input type="number" id="jobPrice" placeholder="60">
+          <label>Price (&pound;)</label>
+          <input type="number" id="jobPrice" placeholder="60" step="0.01">
         </div>
         <div class="form-group">
           <label>Status</label>
@@ -243,7 +261,7 @@ tr:hover td { background: var(--gray-100); }
         </select>
       </div>
       <div class="form-group">
-        <label>Upload Invoice PDF</label>
+        <label>Upload Invoice PDF (optional)</label>
         <input type="file" id="jobInvoiceFile" accept="application/pdf">
       </div>
       <div class="form-group">
@@ -263,14 +281,13 @@ tr:hover td { background: var(--gray-100); }
   <div class="modal">
     <div class="modal-header">
       <h3>Add Agency</h3>
-      <button class="modal-close" onclick="closeModal('addAgencyModal')">✕</button>
+      <button class="modal-close" onclick="closeModal('addAgencyModal')">&times;</button>
     </div>
     <div class="modal-body">
       <div class="alert alert-error" id="agencyError"></div>
-      <div class="alert alert-success" id="agencySuccess"></div>
       <div class="form-group">
         <label>Agency Name *</label>
-        <input type="text" id="agencyName" placeholder="Smith & Co Estate Agents">
+        <input type="text" id="agencyName" placeholder="Smith &amp; Co Estate Agents">
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -286,16 +303,17 @@ tr:hover td { background: var(--gray-100); }
         <label>Contact Email</label>
         <input type="email" id="agencyEmail" placeholder="jane@smithco.com">
       </div>
+      <div class="form-section-title">Portal login</div>
       <div class="form-group">
-        <label>Portal Login Email</label>
+        <label>Login Email *</label>
         <input type="email" id="agencyLoginEmail" placeholder="portal@smithco.com">
       </div>
       <div class="form-group">
-        <label>Portal Password</label>
-        <input type="password" id="agencyLoginPassword" placeholder="Set a password for them">
+        <label>Password * (min 6 chars)</label>
+        <input type="text" id="agencyLoginPassword" placeholder="Set a password for them">
       </div>
       <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveAgency()" id="saveAgencyBtn">Add Agency</button>
+        <button class="btn btn-primary" onclick="saveAgency()" id="saveAgencyBtn">Create Agency + Login</button>
         <button class="btn btn-ghost" onclick="closeModal('addAgencyModal')">Cancel</button>
       </div>
     </div>
@@ -307,7 +325,7 @@ tr:hover td { background: var(--gray-100); }
   <div class="modal">
     <div class="modal-header">
       <h3>Add Engineer</h3>
-      <button class="modal-close" onclick="closeModal('addEngineerModal')">✕</button>
+      <button class="modal-close" onclick="closeModal('addEngineerModal')">&times;</button>
     </div>
     <div class="modal-body">
       <div class="alert alert-error" id="engineerError"></div>
@@ -325,42 +343,72 @@ tr:hover td { background: var(--gray-100); }
         <label>Gas Safe Number</label>
         <input type="text" id="engGasSafe" placeholder="123456">
       </div>
+      <div class="form-section-title">Portal login</div>
       <div class="form-group">
-        <label>Login Email</label>
+        <label>Login Email *</label>
         <input type="email" id="engEmail" placeholder="engineer@example.com">
       </div>
       <div class="form-group">
-        <label>Login Password</label>
-        <input type="password" id="engPassword" placeholder="Set a password">
+        <label>Password * (min 6 chars)</label>
+        <input type="text" id="engPassword" placeholder="Set a password">
       </div>
       <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveEngineer()" id="saveEngineerBtn">Add Engineer</button>
+        <button class="btn btn-primary" onclick="saveEngineer()" id="saveEngineerBtn">Create Engineer + Login</button>
         <button class="btn btn-ghost" onclick="closeModal('addEngineerModal')">Cancel</button>
       </div>
     </div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
 var SUPABASE_URL = 'https://metssgddcebwfmpfeipj.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ldHNzZ2RkY2Vid2ZtcGZlaXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTU0MDgsImV4cCI6MjA5MjE5MTQwOH0.xwNi1fuQMQD1q-iLHBbmsbCdGAHWY0BD-Al9_2mt4L8';
-var EDGE_FN_URL = 'https://metssgddcebwfmpfeipj.supabase.co/functions/v1/create-user';
+var CREATE_FN_URL = SUPABASE_URL + '/functions/v1/create-user';
+var DELETE_FN_URL = SUPABASE_URL + '/functions/v1/delete-user';
+
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 var agencies = [];
 var engineers = [];
+var currentSection = 'jobs';
 
+// --- Auth bootstrap ---
 supabase.auth.getSession().then(function(res) {
   if (!res.data.session) { window.location.href = '/portal/index.html'; return; }
   supabase.from('profiles').select('role').eq('id', res.data.session.user.id).single()
     .then(function(r) {
-      if (!r.data || r.data.role !== 'admin') { window.location.href = '/portal/index.html'; }
-      else { loadAll(); }
+      if (r.error || !r.data) {
+        showToast('Profile not found. Contact admin.', 'error');
+        setTimeout(function(){ signOut(); }, 1500);
+        return;
+      }
+      if (r.data.role !== 'admin') { window.location.href = '/portal/index.html'; return; }
+      loadAll();
+      setupRealtime();
     });
 });
 
+// --- Realtime ---
+function setupRealtime() {
+  var dot = document.getElementById('liveDot');
+  var label = document.getElementById('liveLabel');
+  supabase
+    .channel('admin-stream')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, function() { loadJobs(); if (currentSection === 'invoices') loadInvoices(); })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'agencies' }, function() { loadAgencies(); })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'engineers' }, function() { loadEngineers(); })
+    .subscribe(function(status) {
+      if (status === 'SUBSCRIBED') { dot.classList.remove('off'); label.textContent = 'Live'; }
+      else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') { dot.classList.add('off'); label.textContent = 'Offline'; }
+    });
+}
+
+// --- Sections ---
 function loadAll() { loadJobs(); loadAgencies(); loadEngineers(); }
 
 function showSection(name, el) {
+  currentSection = name;
   document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
   document.getElementById('section-' + name).classList.add('active');
@@ -368,11 +416,39 @@ function showSection(name, el) {
   if (name === 'invoices') loadInvoices();
 }
 
+// --- Helpers ---
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function showToast(msg, kind) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (kind ? ' ' + kind : '');
+  setTimeout(function(){ t.className = 'toast'; }, 3200);
+}
+function setAlert(id, msg, kind) {
+  var el = document.getElementById(id);
+  if (!msg) { el.style.display = 'none'; return; }
+  el.textContent = msg;
+  el.className = 'alert alert-' + (kind || 'error');
+  el.style.display = 'block';
+}
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// Generate a short-lived signed URL for a stored file
+function openFile(bucket, path) {
+  if (!path) return;
+  supabase.storage.from(bucket).createSignedUrl(path, 300).then(function(res) {
+    if (res.error || !res.data) { showToast('Could not open file: ' + (res.error ? res.error.message : 'unknown'), 'error'); return; }
+    window.open(res.data.signedUrl, '_blank');
+  });
+}
+
+// --- Jobs ---
 function loadJobs() {
   supabase.from('jobs').select('*, agencies(name), engineers(full_name)').order('created_at', { ascending: false })
     .then(function(res) {
-      if (res.error) { document.getElementById('jobsTable').innerHTML = '<div class="empty-state">Error loading jobs.</div>'; return; }
-      var jobs = res.data;
+      if (res.error) { document.getElementById('jobsTable').innerHTML = '<div class="empty-state">Error loading jobs: ' + esc(res.error.message) + '</div>'; return; }
+      var jobs = res.data || [];
       document.getElementById('statTotal').textContent = jobs.length;
       document.getElementById('statScheduled').textContent = jobs.filter(function(j) { return j.status === 'scheduled'; }).length;
       document.getElementById('statCompleted').textContent = jobs.filter(function(j) { return j.status === 'completed'; }).length;
@@ -381,25 +457,38 @@ function loadJobs() {
       var html = '<table><thead><tr><th>Address</th><th>Agency</th><th>Engineer</th><th>Type</th><th>Date</th><th>Price</th><th>Status</th><th>Invoice</th><th>Certificate</th><th>Actions</th></tr></thead><tbody>';
       jobs.forEach(function(j) {
         html += '<tr>';
-        html += '<td>' + (j.property_address || '-') + '</td>';
-        html += '<td>' + (j.agencies ? j.agencies.name : '-') + '</td>';
-        html += '<td>' + (j.engineers ? j.engineers.full_name : 'Unassigned') + '</td>';
-        html += '<td>' + j.job_type + '</td>';
-        html += '<td>' + (j.job_date || '-') + '</td>';
-        html += '<td>' + (j.price ? '£' + j.price : '-') + '</td>';
-        html += '<td><span class="badge badge-' + j.status + '">' + j.status + '</span></td>';
-        html += '<td><span class="badge badge-' + j.invoice_status + '">' + j.invoice_status + '</span></td>';
-        html += '<td>' + (j.certificate_url ? '<a href="' + j.certificate_url + '" target="_blank" class="btn btn-sm btn-ghost">View</a>' : '-') + '</td>';
+        html += '<td>' + esc(j.property_address) + '</td>';
+        html += '<td>' + esc(j.agencies ? j.agencies.name : '-') + '</td>';
+        html += '<td>' + esc(j.engineers ? j.engineers.full_name : 'Unassigned') + '</td>';
+        html += '<td>' + esc(j.job_type) + '</td>';
+        html += '<td>' + esc(j.job_date || '-') + '</td>';
+        html += '<td>' + (j.price != null ? '&pound;' + esc(j.price) : '-') + '</td>';
+        html += '<td><span class="badge badge-' + esc(j.status) + '">' + esc(j.status) + '</span></td>';
+        var inv = '<span class="badge badge-' + esc(j.invoice_status) + '">' + esc(j.invoice_status) + '</span>';
+        if (j.invoice_url) inv += ' <button class="link-btn" onclick="openFile(\'invoices\',\'' + esc(j.invoice_url) + '\')">View</button>';
+        html += '<td>' + inv + '</td>';
+        var cert = j.certificate_url
+          ? '<button class="link-btn" onclick="openFile(\'certificates\',\'' + esc(j.certificate_url) + '\')">View</button>'
+          : '-';
+        html += '<td>' + cert + '</td>';
         html += '<td><div class="action-btns">';
-        html += '<button class="btn btn-sm btn-ghost" onclick=\'editJob(' + JSON.stringify(j).replace(/'/g, "\\'") + ')\'>Edit</button>';
+        html += '<button class="btn btn-sm btn-ghost" data-job-id="' + esc(j.id) + '" onclick="editJobById(this)">Edit</button>';
         if (j.invoice_status === 'unpaid' && j.status === 'completed') {
-          html += '<button class="btn btn-sm btn-primary" onclick="markPaid(\'' + j.id + '\')">Mark Paid</button>';
+          html += '<button class="btn btn-sm btn-primary" onclick="markPaid(\'' + esc(j.id) + '\')">Mark Paid</button>';
         }
+        html += '<button class="btn btn-sm btn-danger" onclick="deleteJob(\'' + esc(j.id) + '\')">Delete</button>';
         html += '</div></td></tr>';
       });
       html += '</tbody></table>';
       document.getElementById('jobsTable').innerHTML = html;
+      window.__jobsCache = jobs;
     });
+}
+
+function editJobById(btn) {
+  var id = btn.getAttribute('data-job-id');
+  var j = (window.__jobsCache || []).find(function(x) { return x.id === id; });
+  if (j) editJob(j);
 }
 
 function openAddJob() {
@@ -414,6 +503,8 @@ function openAddJob() {
   document.getElementById('jobType').value = 'CP12';
   document.getElementById('jobStatus').value = 'scheduled';
   document.getElementById('jobInvoiceStatus').value = 'unpaid';
+  document.getElementById('jobInvoiceFile').value = '';
+  setAlert('jobError', '');
   populateSelects();
   openModal('addJobModal');
 }
@@ -429,7 +520,9 @@ function editJob(j) {
   document.getElementById('jobNotes').value = j.notes || '';
   document.getElementById('jobType').value = j.job_type;
   document.getElementById('jobStatus').value = j.status;
-  document.getElementById('jobInvoiceStatus').value = j.invoice_status;
+  document.getElementById('jobInvoiceStatus').value = j.invoice_status || 'unpaid';
+  document.getElementById('jobInvoiceFile').value = '';
+  setAlert('jobError', '');
   populateSelects(j.agency_id, j.engineer_id);
   openModal('addJobModal');
 }
@@ -438,18 +531,19 @@ function populateSelects(selectedAgency, selectedEngineer) {
   var agencySelect = document.getElementById('jobAgency');
   agencySelect.innerHTML = '<option value="">Select agency</option>';
   agencies.forEach(function(a) {
-    agencySelect.innerHTML += '<option value="' + a.id + '"' + (selectedAgency === a.id ? ' selected' : '') + '>' + a.name + '</option>';
+    agencySelect.innerHTML += '<option value="' + esc(a.id) + '"' + (selectedAgency === a.id ? ' selected' : '') + '>' + esc(a.name) + '</option>';
   });
   var engSelect = document.getElementById('jobEngineer');
   engSelect.innerHTML = '<option value="">Unassigned</option>';
   engineers.forEach(function(e) {
-    engSelect.innerHTML += '<option value="' + e.id + '"' + (selectedEngineer === e.id ? ' selected' : '') + '>' + e.full_name + '</option>';
+    engSelect.innerHTML += '<option value="' + esc(e.id) + '"' + (selectedEngineer === e.id ? ' selected' : '') + '>' + esc(e.full_name) + '</option>';
   });
 }
 
 function saveJob() {
   var btn = document.getElementById('saveJobBtn');
   btn.disabled = true; btn.textContent = 'Saving...';
+  setAlert('jobError', '');
   var jobId = document.getElementById('jobId').value;
   var invoiceFile = document.getElementById('jobInvoiceFile').files[0];
   var data = {
@@ -465,135 +559,130 @@ function saveJob() {
     invoice_status: document.getElementById('jobInvoiceStatus').value,
     notes: document.getElementById('jobNotes').value.trim() || null
   };
-  if (!data.property_address) { alert('Property address is required.'); btn.disabled = false; btn.textContent = 'Save Job'; return; }
+  if (!data.property_address) { setAlert('jobError', 'Property address is required.'); btn.disabled = false; btn.textContent = 'Save Job'; return; }
+  if (!data.agency_id) { setAlert('jobError', 'Please select an agency.'); btn.disabled = false; btn.textContent = 'Save Job'; return; }
 
-  function doSave(invoiceUrl) {
-    if (invoiceUrl) data.invoice_url = invoiceUrl;
+  function commit(invoicePath) {
+    if (invoicePath) data.invoice_url = invoicePath;
     var query = jobId ? supabase.from('jobs').update(data).eq('id', jobId) : supabase.from('jobs').insert(data);
     query.then(function(res) {
       btn.disabled = false; btn.textContent = 'Save Job';
-      if (res.error) { alert('Error saving job: ' + res.error.message); return; }
-      closeModal('addJobModal'); loadJobs();
+      if (res.error) { setAlert('jobError', 'Error saving job: ' + res.error.message); return; }
+      closeModal('addJobModal');
+      showToast('Job saved', 'success');
+      loadJobs();
     });
   }
 
   if (invoiceFile) {
-    var path = 'invoices/' + Date.now() + '_' + invoiceFile.name;
-    supabase.storage.from('invoices').upload(path, invoiceFile).then(function(res) {
-      if (res.error) { alert('Error uploading invoice: ' + res.error.message); btn.disabled = false; btn.textContent = 'Save Job'; return; }
-      var url = supabase.storage.from('invoices').getPublicUrl(path).data.publicUrl;
-      doSave(url);
+    var path = 'job_' + (jobId || 'new') + '_' + Date.now() + '.pdf';
+    supabase.storage.from('invoices').upload(path, invoiceFile, { contentType: 'application/pdf' }).then(function(res) {
+      if (res.error) { setAlert('jobError', 'Error uploading invoice: ' + res.error.message); btn.disabled = false; btn.textContent = 'Save Job'; return; }
+      commit(path);
     });
-  } else { doSave(null); }
+  } else { commit(null); }
 }
 
 function markPaid(jobId) {
-  supabase.from('jobs').update({ invoice_status: 'paid' }).eq('id', jobId).then(function() { loadJobs(); });
+  supabase.from('jobs').update({ invoice_status: 'paid' }).eq('id', jobId).then(function(res) {
+    if (res.error) showToast('Error: ' + res.error.message, 'error');
+    else { showToast('Marked paid', 'success'); loadJobs(); }
+  });
 }
 
+function deleteJob(jobId) {
+  if (!confirm('Delete this job? This also deletes its certificate and invoice files.')) return;
+  callFn(DELETE_FN_URL, { target_type: 'job', target_id: jobId }).then(function(out) {
+    if (out.error) showToast('Error: ' + out.error, 'error');
+    else { showToast('Job deleted', 'success'); loadJobs(); }
+  });
+}
+
+// --- Agencies ---
 function loadAgencies() {
   supabase.from('agencies').select('*').order('name').then(function(res) {
     agencies = res.data || [];
     if (!agencies.length) { document.getElementById('agenciesTable').innerHTML = '<div class="empty-state">No agencies yet.</div>'; return; }
-    var html = '<table><thead><tr><th>Name</th><th>Contact</th><th>Email</th><th>Phone</th></tr></thead><tbody>';
-    agencies.forEach(function(a) {
-      html += '<tr><td>' + a.name + '</td><td>' + (a.contact_name || '-') + '</td><td>' + (a.contact_email || '-') + '</td><td>' + (a.contact_phone || '-') + '</td></tr>';
+    // look up login emails for each agency
+    supabase.from('profiles').select('agency_id, id, full_name').eq('role', 'agency').then(function(pr) {
+      var profMap = {};
+      (pr.data || []).forEach(function(p) { if (p.agency_id) profMap[p.agency_id] = p; });
+      var html = '<table><thead><tr><th>Name</th><th>Contact</th><th>Email</th><th>Phone</th><th>Login</th><th>Actions</th></tr></thead><tbody>';
+      agencies.forEach(function(a) {
+        var p = profMap[a.id];
+        html += '<tr>';
+        html += '<td>' + esc(a.name) + '</td>';
+        html += '<td>' + esc(a.contact_name || '-') + '</td>';
+        html += '<td>' + esc(a.contact_email || '-') + '</td>';
+        html += '<td>' + esc(a.contact_phone || '-') + '</td>';
+        html += '<td>' + (p ? '<span class="badge badge-paid">Active</span>' : '<span class="badge badge-unpaid">None</span>') + '</td>';
+        html += '<td><div class="action-btns">';
+        html += '<button class="btn btn-sm btn-danger" onclick="deleteAgency(\'' + esc(a.id) + '\',\'' + esc(a.name) + '\')">Delete</button>';
+        html += '</div></td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('agenciesTable').innerHTML = html;
     });
-    html += '</tbody></table>';
-    document.getElementById('agenciesTable').innerHTML = html;
   });
 }
 
 function openAddAgency() {
-  document.getElementById('agencyName').value = '';
-  document.getElementById('agencyContact').value = '';
-  document.getElementById('agencyPhone').value = '';
-  document.getElementById('agencyEmail').value = '';
-  document.getElementById('agencyLoginEmail').value = '';
-  document.getElementById('agencyLoginPassword').value = '';
-  document.getElementById('agencyError').style.display = 'none';
-  document.getElementById('agencySuccess').style.display = 'none';
+  ['agencyName','agencyContact','agencyPhone','agencyEmail','agencyLoginEmail','agencyLoginPassword'].forEach(function(id){ document.getElementById(id).value = ''; });
+  setAlert('agencyError', '');
   openModal('addAgencyModal');
 }
 
 function saveAgency() {
   var btn = document.getElementById('saveAgencyBtn');
-  btn.disabled = true; btn.textContent = 'Saving...';
-  var name = document.getElementById('agencyName').value.trim();
-  var loginEmail = document.getElementById('agencyLoginEmail').value.trim();
-  var loginPassword = document.getElementById('agencyLoginPassword').value;
-  var errorEl = document.getElementById('agencyError');
-  var successEl = document.getElementById('agencySuccess');
+  btn.disabled = true; btn.textContent = 'Creating...';
+  setAlert('agencyError', '');
 
-  if (!name) {
-    errorEl.textContent = 'Agency name is required.';
-    errorEl.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Add Agency';
-    return;
-  }
-
-  supabase.from('agencies').insert({
-    name: name,
+  var payload = {
+    role: 'agency',
+    full_name: document.getElementById('agencyName').value.trim(),
+    agency_name: document.getElementById('agencyName').value.trim(),
     contact_name: document.getElementById('agencyContact').value.trim() || null,
     contact_email: document.getElementById('agencyEmail').value.trim() || null,
-    contact_phone: document.getElementById('agencyPhone').value.trim() || null
-  }).select().then(function(res) {
-    if (res.error) {
-      errorEl.textContent = 'Error: ' + res.error.message;
-      errorEl.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'Add Agency';
-      return;
-    }
-    var agencyId = res.data[0].id;
+    contact_phone: document.getElementById('agencyPhone').value.trim() || null,
+    email: document.getElementById('agencyLoginEmail').value.trim(),
+    password: document.getElementById('agencyLoginPassword').value
+  };
 
-    if (loginEmail && loginPassword) {
-      supabase.auth.getSession().then(function(s) {
-        fetch(EDGE_FN_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + s.data.session.access_token
-          },
-          body: JSON.stringify({
-            email: loginEmail,
-            password: loginPassword,
-            role: 'agency',
-            full_name: name,
-            agency_id: agencyId
-          })
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          btn.disabled = false; btn.textContent = 'Add Agency';
-          if (data.error) {
-            errorEl.textContent = 'Agency added but portal login failed: ' + data.error;
-            errorEl.style.display = 'block';
-          } else {
-            successEl.textContent = 'Agency added successfully with portal access.';
-            successEl.style.display = 'block';
-            setTimeout(function() { closeModal('addAgencyModal'); loadAgencies(); }, 1500);
-          }
-        })
-        .catch(function(err) {
-          errorEl.textContent = 'Network error: ' + err.message;
-          errorEl.style.display = 'block';
-          btn.disabled = false; btn.textContent = 'Add Agency';
-        });
-      });
-    } else {
-      btn.disabled = false; btn.textContent = 'Add Agency';
-      closeModal('addAgencyModal'); loadAgencies();
-    }
+  if (!payload.agency_name) { setAlert('agencyError', 'Agency name is required.'); btn.disabled = false; btn.textContent = 'Create Agency + Login'; return; }
+  if (!payload.email || !payload.password) { setAlert('agencyError', 'Login email and password are required. The whole thing is created in one step now.'); btn.disabled = false; btn.textContent = 'Create Agency + Login'; return; }
+
+  callFn(CREATE_FN_URL, payload).then(function(out) {
+    btn.disabled = false; btn.textContent = 'Create Agency + Login';
+    if (out.error) { setAlert('agencyError', out.error); return; }
+    closeModal('addAgencyModal');
+    showToast('Agency + login created', 'success');
+    loadAgencies();
   });
 }
 
+function deleteAgency(id, name) {
+  if (!confirm('Delete "' + name + '"?\n\nThis removes the agency, its portal login, all its jobs, and any uploaded certificates and invoices for those jobs. This cannot be undone.')) return;
+  callFn(DELETE_FN_URL, { target_type: 'agency', target_id: id }).then(function(out) {
+    if (out.error) showToast('Error: ' + out.error, 'error');
+    else { showToast('Agency deleted', 'success'); loadAgencies(); loadJobs(); }
+  });
+}
+
+// --- Engineers ---
 function loadEngineers() {
   supabase.from('engineers').select('*').order('full_name').then(function(res) {
     engineers = res.data || [];
     if (!engineers.length) { document.getElementById('engineersTable').innerHTML = '<div class="empty-state">No engineers yet.</div>'; return; }
-    var html = '<table><thead><tr><th>Name</th><th>Phone</th><th>Gas Safe No.</th></tr></thead><tbody>';
+    var html = '<table><thead><tr><th>Name</th><th>Phone</th><th>Gas Safe No.</th><th>Login</th><th>Actions</th></tr></thead><tbody>';
     engineers.forEach(function(e) {
-      html += '<tr><td>' + e.full_name + '</td><td>' + (e.phone || '-') + '</td><td>' + (e.gas_safe_number || '-') + '</td></tr>';
+      html += '<tr>';
+      html += '<td>' + esc(e.full_name) + '</td>';
+      html += '<td>' + esc(e.phone || '-') + '</td>';
+      html += '<td>' + esc(e.gas_safe_number || '-') + '</td>';
+      html += '<td>' + (e.user_id ? '<span class="badge badge-paid">Active</span>' : '<span class="badge badge-unpaid">None</span>') + '</td>';
+      html += '<td><div class="action-btns">';
+      html += '<button class="btn btn-sm btn-danger" onclick="deleteEngineer(\'' + esc(e.id) + '\',\'' + esc(e.full_name) + '\')">Delete</button>';
+      html += '</div></td></tr>';
     });
     html += '</tbody></table>';
     document.getElementById('engineersTable').innerHTML = html;
@@ -601,70 +690,44 @@ function loadEngineers() {
 }
 
 function openAddEngineer() {
-  document.getElementById('engName').value = '';
-  document.getElementById('engPhone').value = '';
-  document.getElementById('engGasSafe').value = '';
-  document.getElementById('engEmail').value = '';
-  document.getElementById('engPassword').value = '';
-  document.getElementById('engineerError').style.display = 'none';
+  ['engName','engPhone','engGasSafe','engEmail','engPassword'].forEach(function(id){ document.getElementById(id).value = ''; });
+  setAlert('engineerError', '');
   openModal('addEngineerModal');
 }
 
 function saveEngineer() {
   var btn = document.getElementById('saveEngineerBtn');
-  btn.disabled = true; btn.textContent = 'Saving...';
-  var name = document.getElementById('engName').value.trim();
-  var email = document.getElementById('engEmail').value.trim();
-  var password = document.getElementById('engPassword').value;
-  var errorEl = document.getElementById('engineerError');
+  btn.disabled = true; btn.textContent = 'Creating...';
+  setAlert('engineerError', '');
+  var payload = {
+    role: 'engineer',
+    full_name: document.getElementById('engName').value.trim(),
+    phone: document.getElementById('engPhone').value.trim() || null,
+    gas_safe_number: document.getElementById('engGasSafe').value.trim() || null,
+    email: document.getElementById('engEmail').value.trim(),
+    password: document.getElementById('engPassword').value
+  };
+  if (!payload.full_name) { setAlert('engineerError', 'Full name is required.'); btn.disabled = false; btn.textContent = 'Create Engineer + Login'; return; }
+  if (!payload.email || !payload.password) { setAlert('engineerError', 'Login email and password are required.'); btn.disabled = false; btn.textContent = 'Create Engineer + Login'; return; }
 
-  if (!name) {
-    errorEl.textContent = 'Name is required.';
-    errorEl.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Add Engineer';
-    return;
-  }
-
-  supabase.auth.getSession().then(function(s) {
-    fetch(EDGE_FN_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + s.data.session.access_token
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        role: 'engineer',
-        full_name: name
-      })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.error) {
-        errorEl.textContent = 'Error creating login: ' + data.error;
-        errorEl.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'Add Engineer';
-        return;
-      }
-      supabase.from('engineers').insert({
-        user_id: data.user_id,
-        full_name: name,
-        phone: document.getElementById('engPhone').value.trim() || null,
-        gas_safe_number: document.getElementById('engGasSafe').value.trim() || null
-      }).then(function() {
-        btn.disabled = false; btn.textContent = 'Add Engineer';
-        closeModal('addEngineerModal'); loadEngineers();
-      });
-    })
-    .catch(function(err) {
-      errorEl.textContent = 'Network error: ' + err.message;
-      errorEl.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'Add Engineer';
-    });
+  callFn(CREATE_FN_URL, payload).then(function(out) {
+    btn.disabled = false; btn.textContent = 'Create Engineer + Login';
+    if (out.error) { setAlert('engineerError', out.error); return; }
+    closeModal('addEngineerModal');
+    showToast('Engineer + login created', 'success');
+    loadEngineers();
   });
 }
 
+function deleteEngineer(id, name) {
+  if (!confirm('Delete "' + name + '"?\n\nThis removes the engineer and their portal login. Their past jobs will stay but be unassigned.')) return;
+  callFn(DELETE_FN_URL, { target_type: 'engineer', target_id: id }).then(function(out) {
+    if (out.error) showToast('Error: ' + out.error, 'error');
+    else { showToast('Engineer deleted', 'success'); loadEngineers(); loadJobs(); }
+  });
+}
+
+// --- Invoices section ---
 function loadInvoices() {
   supabase.from('jobs').select('*, agencies(name)').not('invoice_url', 'is', null).order('created_at', { ascending: false })
     .then(function(res) {
@@ -672,19 +735,45 @@ function loadInvoices() {
       if (!jobs.length) { document.getElementById('invoicesTable').innerHTML = '<div class="empty-state">No invoices yet.</div>'; return; }
       var html = '<table><thead><tr><th>Address</th><th>Agency</th><th>Date</th><th>Price</th><th>Invoice</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
       jobs.forEach(function(j) {
-        html += '<tr><td>' + j.property_address + '</td><td>' + (j.agencies ? j.agencies.name : '-') + '</td><td>' + (j.job_date || '-') + '</td><td>' + (j.price ? '£' + j.price : '-') + '</td><td><a href="' + j.invoice_url + '" target="_blank" class="btn btn-sm btn-ghost">View PDF</a></td><td><span class="badge badge-' + j.invoice_status + '">' + j.invoice_status + '</span></td><td>';
-        if (j.invoice_status === 'unpaid') {
-          html += '<button class="btn btn-sm btn-primary" onclick="markPaid(\'' + j.id + '\')">Mark Paid</button>';
-        }
-        html += '</td></tr>';
+        html += '<tr>';
+        html += '<td>' + esc(j.property_address) + '</td>';
+        html += '<td>' + esc(j.agencies ? j.agencies.name : '-') + '</td>';
+        html += '<td>' + esc(j.job_date || '-') + '</td>';
+        html += '<td>' + (j.price != null ? '&pound;' + esc(j.price) : '-') + '</td>';
+        html += '<td><button class="link-btn" onclick="openFile(\'invoices\',\'' + esc(j.invoice_url) + '\')">View PDF</button></td>';
+        html += '<td><span class="badge badge-' + esc(j.invoice_status) + '">' + esc(j.invoice_status) + '</span></td>';
+        html += '<td><div class="action-btns">';
+        if (j.invoice_status === 'unpaid') html += '<button class="btn btn-sm btn-primary" onclick="markPaid(\'' + esc(j.id) + '\')">Mark Paid</button>';
+        html += '<button class="btn btn-sm btn-danger" onclick="deleteFile(\'invoices\',\'' + esc(j.id) + '\')">Remove File</button>';
+        html += '</div></td></tr>';
       });
       html += '</tbody></table>';
       document.getElementById('invoicesTable').innerHTML = html;
     });
 }
 
-function openModal(id) { document.getElementById(id).classList.add('active'); }
-function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function deleteFile(bucket, jobId) {
+  if (!confirm('Remove the uploaded ' + (bucket === 'certificates' ? 'certificate' : 'invoice') + ' file for this job?')) return;
+  callFn(DELETE_FN_URL, { target_type: 'file', target_id: jobId, bucket: bucket }).then(function(out) {
+    if (out.error) showToast('Error: ' + out.error, 'error');
+    else { showToast('File removed', 'success'); loadJobs(); loadInvoices(); }
+  });
+}
+
+// --- Shared edge-function caller ---
+function callFn(url, body) {
+  return supabase.auth.getSession().then(function(s) {
+    var tok = s.data.session ? s.data.session.access_token : null;
+    if (!tok) return { error: 'Session expired. Please sign in again.' };
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok, 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify(body)
+    }).then(function(r) { return r.json().catch(function(){ return { error: 'Bad response from server (status ' + r.status + ')' }; }); })
+      .catch(function(e) { return { error: 'Network error: ' + e.message }; });
+  });
+}
+
 function signOut() { supabase.auth.signOut().then(function() { window.location.href = '/portal/index.html'; }); }
 
 window.addEventListener('click', function(e) {
