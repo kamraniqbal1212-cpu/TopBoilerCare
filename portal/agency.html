@@ -25,7 +25,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: v
 }
 .sidebar-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--white); margin-bottom: 4px; }
 .sidebar-logo span { color: var(--yellow); }
-.sidebar-agency { font-size: 0.78rem; color: var(--gray-600); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.08em; }
+.sidebar-agency { font-size: 0.78rem; color: var(--gray-600); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.08em; }
+.live-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--gray-400); background: rgba(255,255,255,0.05); border-radius: 100px; padding: 3px 10px; margin-bottom: 24px; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; animation: pulse 2s infinite; }
+.live-dot.off { background: var(--gray-600); animation: none; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); } 70% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
 .nav-item {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 14px; border-radius: var(--radius);
@@ -54,8 +58,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: v
 .card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); overflow: hidden; }
 .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-200); }
 .card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: var(--black); }
+.table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
-th { padding: 12px 16px; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); }
+th { padding: 12px 16px; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
 td { padding: 14px 16px; font-size: 0.9rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--gray-100); }
@@ -67,8 +72,11 @@ tr:hover td { background: var(--gray-100); }
 .btn { padding: 7px 14px; border-radius: var(--radius); font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: all var(--transition); font-family: 'DM Sans', sans-serif; border: none; }
 .btn-ghost { background: var(--gray-100); color: var(--gray-800); }
 .btn-ghost:hover { background: var(--gray-200); }
+.link-btn { background: none; border: none; color: var(--blue); font-size: 0.85rem; cursor: pointer; font-weight: 500; padding: 0; text-decoration: underline; font-family: inherit; }
+.link-btn:hover { color: #1b5fd0; }
 .empty-state { padding: 48px 24px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
 .loading { padding: 32px; text-align: center; color: var(--gray-400); }
+.toast { position: fixed; bottom: 24px; right: 24px; background: #ef4444; color: white; padding: 12px 20px; border-radius: var(--radius); font-weight: 600; font-size: 0.9rem; display: none; z-index: 999; }
 </style>
 </head>
 <body>
@@ -77,6 +85,7 @@ tr:hover td { background: var(--gray-100); }
   <div>
     <div class="sidebar-logo">Top Boiler <span>Care</span></div>
     <div class="sidebar-agency" id="agencyName">Agency Portal</div>
+    <div class="live-chip"><span class="live-dot off" id="liveDot"></span><span id="liveLabel">Connecting...</span></div>
     <button class="nav-item active" onclick="showSection('jobs', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       Jobs
@@ -109,7 +118,7 @@ tr:hover td { background: var(--gray-100); }
     </div>
     <div class="card">
       <div class="card-header"><span class="card-title">All Jobs</span></div>
-      <div id="jobsTable"><div class="loading">Loading...</div></div>
+      <div class="table-wrap" id="jobsTable"><div class="loading">Loading...</div></div>
     </div>
   </div>
 
@@ -120,7 +129,7 @@ tr:hover td { background: var(--gray-100); }
     </div>
     <div class="card">
       <div class="card-header"><span class="card-title">All Invoices</span></div>
-      <div id="invoicesTable"><div class="loading">Loading...</div></div>
+      <div class="table-wrap" id="invoicesTable"><div class="loading">Loading...</div></div>
     </div>
   </div>
 
@@ -131,32 +140,66 @@ tr:hover td { background: var(--gray-100); }
     </div>
     <div class="card">
       <div class="card-header"><span class="card-title">All Certificates</span></div>
-      <div id="certificatesTable"><div class="loading">Loading...</div></div>
+      <div class="table-wrap" id="certificatesTable"><div class="loading">Loading...</div></div>
     </div>
   </div>
 
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 var SUPABASE_URL = 'https://metssgddcebwfmpfeipj.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ldHNzZ2RkY2Vid2ZtcGZlaXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTU0MDgsImV4cCI6MjA5MjE5MTQwOH0.xwNi1fuQMQD1q-iLHBbmsbCdGAHWY0BD-Al9_2mt4L8';
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 var currentAgencyId = null;
+var currentSection = 'jobs';
+
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 3500);
+}
+
+function openFile(bucket, path) {
+  if (!path) return;
+  supabase.storage.from(bucket).createSignedUrl(path, 300).then(function(res) {
+    if (res.error || !res.data) { showToast('Could not open file: ' + (res.error ? res.error.message : 'unknown')); return; }
+    window.open(res.data.signedUrl, '_blank');
+  });
+}
 
 supabase.auth.getSession().then(function(res) {
   if (!res.data.session) { window.location.href = '/portal/index.html'; return; }
   var userId = res.data.session.user.id;
   supabase.from('profiles').select('role, agency_id').eq('id', userId).single()
     .then(function(r) {
-      if (!r.data || r.data.role !== 'agency') { window.location.href = '/portal/index.html'; return; }
+      if (r.error || !r.data) { window.location.href = '/portal/index.html'; return; }
+      if (r.data.role !== 'agency') { window.location.href = '/portal/index.html'; return; }
       currentAgencyId = r.data.agency_id;
       supabase.from('agencies').select('name').eq('id', currentAgencyId).single()
-        .then(function(a) {
-          if (a.data) document.getElementById('agencyName').textContent = a.data.name;
-        });
+        .then(function(a) { if (a.data) document.getElementById('agencyName').textContent = a.data.name; });
       loadJobs();
+      setupRealtime();
     });
 });
+
+function setupRealtime() {
+  var dot = document.getElementById('liveDot');
+  var label = document.getElementById('liveLabel');
+  supabase
+    .channel('agency-stream')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs', filter: 'agency_id=eq.' + currentAgencyId }, function() {
+      if (currentSection === 'jobs') loadJobs();
+      else if (currentSection === 'invoices') loadInvoicesTable();
+      else if (currentSection === 'certificates') loadCertificatesTable();
+    })
+    .subscribe(function(status) {
+      if (status === 'SUBSCRIBED') { dot.classList.remove('off'); label.textContent = 'Live'; }
+      else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') { dot.classList.add('off'); label.textContent = 'Offline'; }
+    });
+}
 
 function loadJobs() {
   supabase.from('jobs').select('*').eq('agency_id', currentAgencyId).order('created_at', { ascending: false })
@@ -169,13 +212,15 @@ function loadJobs() {
       var html = '<table><thead><tr><th>Address</th><th>Tenant</th><th>Type</th><th>Date</th><th>Status</th><th>Invoice</th><th>Certificate</th></tr></thead><tbody>';
       jobs.forEach(function(j) {
         html += '<tr>';
-        html += '<td>' + j.property_address + '</td>';
-        html += '<td>' + (j.tenant_name || '-') + '</td>';
-        html += '<td>' + j.job_type + '</td>';
-        html += '<td>' + (j.job_date || '-') + '</td>';
-        html += '<td><span class="badge badge-' + j.status + '">' + j.status + '</span></td>';
-        html += '<td><span class="badge badge-' + j.invoice_status + '">' + j.invoice_status + '</span>' + (j.invoice_url ? ' <a href="' + j.invoice_url + '" target="_blank" class="btn btn-ghost">Download</a>' : '') + '</td>';
-        html += '<td>' + (j.certificate_url ? '<a href="' + j.certificate_url + '" target="_blank" class="btn btn-ghost">Download</a>' : 'Pending') + '</td>';
+        html += '<td>' + esc(j.property_address) + '</td>';
+        html += '<td>' + esc(j.tenant_name || '-') + '</td>';
+        html += '<td>' + esc(j.job_type) + '</td>';
+        html += '<td>' + esc(j.job_date || '-') + '</td>';
+        html += '<td><span class="badge badge-' + esc(j.status) + '">' + esc(j.status) + '</span></td>';
+        var inv = '<span class="badge badge-' + esc(j.invoice_status) + '">' + esc(j.invoice_status) + '</span>';
+        if (j.invoice_url) inv += ' <button class="link-btn" onclick="openFile(\'invoices\',\'' + esc(j.invoice_url) + '\')">Download</button>';
+        html += '<td>' + inv + '</td>';
+        html += '<td>' + (j.certificate_url ? '<button class="link-btn" onclick="openFile(\'certificates\',\'' + esc(j.certificate_url) + '\')">Download</button>' : 'Pending') + '</td>';
         html += '</tr>';
       });
       html += '</tbody></table>';
@@ -184,6 +229,7 @@ function loadJobs() {
 }
 
 function showSection(name, el) {
+  currentSection = name;
   document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
   document.getElementById('section-' + name).classList.add('active');
@@ -199,7 +245,7 @@ function loadInvoicesTable() {
       if (!jobs.length) { document.getElementById('invoicesTable').innerHTML = '<div class="empty-state">No invoices yet.</div>'; return; }
       var html = '<table><thead><tr><th>Address</th><th>Date</th><th>Price</th><th>Status</th><th>Download</th></tr></thead><tbody>';
       jobs.forEach(function(j) {
-        html += '<tr><td>' + j.property_address + '</td><td>' + (j.job_date || '-') + '</td><td>' + (j.price ? '£' + j.price : '-') + '</td><td><span class="badge badge-' + j.invoice_status + '">' + j.invoice_status + '</span></td><td><a href="' + j.invoice_url + '" target="_blank" class="btn btn-ghost">Download PDF</a></td></tr>';
+        html += '<tr><td>' + esc(j.property_address) + '</td><td>' + esc(j.job_date || '-') + '</td><td>' + (j.price != null ? '&pound;' + esc(j.price) : '-') + '</td><td><span class="badge badge-' + esc(j.invoice_status) + '">' + esc(j.invoice_status) + '</span></td><td><button class="link-btn" onclick="openFile(\'invoices\',\'' + esc(j.invoice_url) + '\')">Download PDF</button></td></tr>';
       });
       html += '</tbody></table>';
       document.getElementById('invoicesTable').innerHTML = html;
@@ -213,7 +259,7 @@ function loadCertificatesTable() {
       if (!jobs.length) { document.getElementById('certificatesTable').innerHTML = '<div class="empty-state">No certificates yet.</div>'; return; }
       var html = '<table><thead><tr><th>Address</th><th>Tenant</th><th>Date</th><th>Type</th><th>Download</th></tr></thead><tbody>';
       jobs.forEach(function(j) {
-        html += '<tr><td>' + j.property_address + '</td><td>' + (j.tenant_name || '-') + '</td><td>' + (j.job_date || '-') + '</td><td>' + j.job_type + '</td><td><a href="' + j.certificate_url + '" target="_blank" class="btn btn-ghost">Download PDF</a></td></tr>';
+        html += '<tr><td>' + esc(j.property_address) + '</td><td>' + esc(j.tenant_name || '-') + '</td><td>' + esc(j.job_date || '-') + '</td><td>' + esc(j.job_type) + '</td><td><button class="link-btn" onclick="openFile(\'certificates\',\'' + esc(j.certificate_url) + '\')">Download PDF</button></td></tr>';
       });
       html += '</tbody></table>';
       document.getElementById('certificatesTable').innerHTML = html;
