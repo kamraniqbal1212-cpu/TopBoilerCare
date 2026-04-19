@@ -20,7 +20,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: v
 .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar); background: var(--black); padding: 28px 20px; display: flex; flex-direction: column; z-index: 100; border-right: 1px solid rgba(255,255,255,0.06); }
 .sidebar-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--white); margin-bottom: 4px; }
 .sidebar-logo span { color: var(--yellow); }
-.sidebar-role { font-size: 0.78rem; color: var(--gray-600); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.08em; }
+.sidebar-role { font-size: 0.78rem; color: var(--gray-600); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.08em; }
+.live-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--gray-400); background: rgba(255,255,255,0.05); border-radius: 100px; padding: 3px 10px; margin-bottom: 24px; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; animation: pulse 2s infinite; }
+.live-dot.off { background: var(--gray-600); animation: none; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); } 70% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
 .sidebar-bottom { margin-top: auto; }
 .btn-signout { width: 100%; padding: 10px 14px; background: none; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); color: var(--gray-400); font-size: 0.88rem; cursor: pointer; transition: all var(--transition); font-family: 'DM Sans', sans-serif; }
 .btn-signout:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
@@ -54,10 +58,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: v
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 .btn-ghost { background: var(--gray-100); color: var(--gray-800); }
 .btn-ghost:hover { background: var(--gray-200); }
+.link-btn { background: none; border: none; color: var(--blue); font-size: 0.85rem; cursor: pointer; font-weight: 500; padding: 0; text-decoration: underline; font-family: inherit; }
+.link-btn:hover { color: #1b5fd0; }
 .cert-uploaded { font-size: 0.85rem; color: #16a34a; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .empty-state { padding: 48px 24px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
 .loading { padding: 32px; text-align: center; color: var(--gray-400); }
-.success-toast { position: fixed; bottom: 24px; right: 24px; background: #16a34a; color: white; padding: 12px 20px; border-radius: var(--radius); font-weight: 600; font-size: 0.9rem; display: none; z-index: 999; }
+.toast { position: fixed; bottom: 24px; right: 24px; background: #16a34a; color: white; padding: 12px 20px; border-radius: var(--radius); font-weight: 600; font-size: 0.9rem; display: none; z-index: 999; }
+.toast.error { background: #ef4444; }
 </style>
 </head>
 <body>
@@ -66,6 +73,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: v
   <div>
     <div class="sidebar-logo">Top Boiler <span>Care</span></div>
     <div class="sidebar-role" id="engName">Engineer</div>
+    <div class="live-chip"><span class="live-dot off" id="liveDot"></span><span id="liveLabel">Connecting...</span></div>
   </div>
   <div class="sidebar-bottom">
     <button class="btn-signout" onclick="signOut()">Sign out</button>
@@ -87,7 +95,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: v
   </div>
 </div>
 
-<div class="success-toast" id="successToast">Certificate uploaded successfully</div>
+<div class="toast" id="toast"></div>
 
 <script>
 var SUPABASE_URL = 'https://metssgddcebwfmpfeipj.supabase.co';
@@ -95,21 +103,50 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 var currentEngineerId = null;
 
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function showToast(msg, kind) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast' + (kind === 'error' ? ' error' : '');
+  t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 3000);
+}
+
+function openFile(bucket, path) {
+  if (!path) return;
+  supabase.storage.from(bucket).createSignedUrl(path, 300).then(function(res) {
+    if (res.error || !res.data) { showToast('Could not open file', 'error'); return; }
+    window.open(res.data.signedUrl, '_blank');
+  });
+}
+
 supabase.auth.getSession().then(function(res) {
   if (!res.data.session) { window.location.href = '/portal/index.html'; return; }
   var userId = res.data.session.user.id;
   supabase.from('profiles').select('role, full_name').eq('id', userId).single()
     .then(function(r) {
-      if (!r.data || r.data.role !== 'engineer') { window.location.href = '/portal/index.html'; return; }
+      if (r.error || !r.data || r.data.role !== 'engineer') { window.location.href = '/portal/index.html'; return; }
       document.getElementById('engName').textContent = r.data.full_name;
       supabase.from('engineers').select('id').eq('user_id', userId).single()
         .then(function(e) {
-          if (!e.data) return;
+          if (!e.data) { showToast('Engineer record not found. Contact admin.', 'error'); return; }
           currentEngineerId = e.data.id;
           loadJobs();
+          setupRealtime();
         });
     });
 });
+
+function setupRealtime() {
+  var dot = document.getElementById('liveDot');
+  var label = document.getElementById('liveLabel');
+  supabase
+    .channel('engineer-stream')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs', filter: 'engineer_id=eq.' + currentEngineerId }, function() { loadJobs(); })
+    .subscribe(function(status) {
+      if (status === 'SUBSCRIBED') { dot.classList.remove('off'); label.textContent = 'Live'; }
+      else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') { dot.classList.add('off'); label.textContent = 'Offline'; }
+    });
+}
 
 function loadJobs() {
   supabase.from('jobs').select('*, agencies(name)').eq('engineer_id', currentEngineerId).order('job_date', { ascending: true })
@@ -121,24 +158,24 @@ function loadJobs() {
       var html = '';
       jobs.forEach(function(j) {
         html += '<div class="job-card">';
-        html += '<div class="job-card-header"><div class="job-address">' + j.property_address + '</div><span class="badge badge-' + j.status + '">' + j.status + '</span></div>';
+        html += '<div class="job-card-header"><div class="job-address">' + esc(j.property_address) + '</div><span class="badge badge-' + esc(j.status) + '">' + esc(j.status) + '</span></div>';
         html += '<div class="job-meta">';
-        html += '<span>📋 ' + j.job_type + '</span>';
-        if (j.job_date) html += '<span>📅 ' + j.job_date + '</span>';
-        if (j.tenant_name) html += '<span>👤 ' + j.tenant_name + '</span>';
-        if (j.tenant_phone) html += '<span>📞 ' + j.tenant_phone + '</span>';
-        if (j.agencies) html += '<span>🏠 ' + j.agencies.name + '</span>';
-        if (j.price) html += '<span>💷 £' + j.price + '</span>';
+        html += '<span>&#x1F4CB; ' + esc(j.job_type) + '</span>';
+        if (j.job_date) html += '<span>&#x1F4C5; ' + esc(j.job_date) + '</span>';
+        if (j.tenant_name) html += '<span>&#x1F464; ' + esc(j.tenant_name) + '</span>';
+        if (j.tenant_phone) html += '<span>&#x1F4DE; ' + esc(j.tenant_phone) + '</span>';
+        if (j.agencies) html += '<span>&#x1F3E0; ' + esc(j.agencies.name) + '</span>';
+        if (j.price != null) html += '<span>&pound;' + esc(j.price) + '</span>';
         html += '</div>';
-        if (j.notes) html += '<div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:12px;padding:10px 14px;background:var(--gray-100);border-radius:var(--radius);">📝 ' + j.notes + '</div>';
+        if (j.notes) html += '<div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:12px;padding:10px 14px;background:var(--gray-100);border-radius:var(--radius);">&#x1F4DD; ' + esc(j.notes) + '</div>';
         if (j.certificate_url) {
-          html += '<div class="cert-uploaded">✓ Certificate uploaded — <a href="' + j.certificate_url + '" target="_blank" style="color:var(--blue);">View</a></div>';
+          html += '<div class="cert-uploaded">&#10003; Certificate uploaded &mdash; <button class="link-btn" onclick="openFile(\'certificates\',\'' + esc(j.certificate_url) + '\')">View</button></div>';
         } else {
           html += '<div class="upload-area">';
           html += '<label>Upload Gas Safety Certificate (PDF)</label>';
           html += '<div class="upload-row">';
-          html += '<input type="file" id="cert_' + j.id + '" accept="application/pdf">';
-          html += '<button class="btn btn-primary" onclick="uploadCertificate(\'' + j.id + '\')" id="uploadBtn_' + j.id + '">Upload</button>';
+          html += '<input type="file" id="cert_' + esc(j.id) + '" accept="application/pdf">';
+          html += '<button class="btn btn-primary" onclick="uploadCertificate(\'' + esc(j.id) + '\')" id="uploadBtn_' + esc(j.id) + '">Upload</button>';
           html += '</div></div>';
         }
         html += '</div>';
@@ -151,18 +188,16 @@ function uploadCertificate(jobId) {
   var fileInput = document.getElementById('cert_' + jobId);
   var btn = document.getElementById('uploadBtn_' + jobId);
   var file = fileInput.files[0];
-  if (!file) { alert('Please select a PDF file first.'); return; }
+  if (!file) { showToast('Select a PDF file first.', 'error'); return; }
   btn.disabled = true; btn.textContent = 'Uploading...';
-  var path = 'certificates/' + jobId + '_' + Date.now() + '.pdf';
-  supabase.storage.from('certificates').upload(path, file)
+  var path = jobId + '_' + Date.now() + '.pdf';
+  supabase.storage.from('certificates').upload(path, file, { contentType: 'application/pdf' })
     .then(function(res) {
-      if (res.error) { alert('Upload failed: ' + res.error.message); btn.disabled = false; btn.textContent = 'Upload'; return; }
-      var url = supabase.storage.from('certificates').getPublicUrl(path).data.publicUrl;
-      supabase.from('jobs').update({ certificate_url: url, status: 'completed' }).eq('id', jobId)
-        .then(function() {
-          var toast = document.getElementById('successToast');
-          toast.style.display = 'block';
-          setTimeout(function() { toast.style.display = 'none'; }, 3000);
+      if (res.error) { showToast('Upload failed: ' + res.error.message, 'error'); btn.disabled = false; btn.textContent = 'Upload'; return; }
+      supabase.from('jobs').update({ certificate_url: path, status: 'completed' }).eq('id', jobId)
+        .then(function(u) {
+          if (u.error) { showToast('Saved file but could not update job: ' + u.error.message, 'error'); btn.disabled = false; btn.textContent = 'Upload'; return; }
+          showToast('Certificate uploaded');
           loadJobs();
         });
     });
