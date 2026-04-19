@@ -141,52 +141,64 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function showError(msg) {
+  var el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function resetButton() {
+  var btn = document.getElementById('loginBtn');
+  btn.disabled = false;
+  btn.textContent = 'Sign in';
+}
+
 // If already logged in, redirect
 supabase.auth.getSession().then(function(result) {
-  if (result.data.session) {
-    redirectByRole();
-  }
+  if (result.data.session) redirectByRole();
 });
 
 function redirectByRole() {
   supabase.auth.getUser().then(function(result) {
-    if (!result.data.user) return;
+    if (!result.data.user) { resetButton(); showError('Session lost. Please try again.'); return; }
     supabase.from('profiles').select('role').eq('id', result.data.user.id).single()
       .then(function(res) {
-        if (!res.data) return;
+        if (res.error || !res.data) {
+          resetButton();
+          showError('No portal profile found for this account. Contact admin.');
+          return;
+        }
         if (res.data.role === 'admin') window.location.href = '/portal/admin.html';
         else if (res.data.role === 'agency') window.location.href = '/portal/agency.html';
         else if (res.data.role === 'engineer') window.location.href = '/portal/engineer.html';
+        else { resetButton(); showError('Unknown role: ' + res.data.role); }
       });
   });
 }
 
 function handleLogin() {
-  var email = document.getElementById('email').value.trim();
+  var email = document.getElementById('email').value.trim().toLowerCase();
   var password = document.getElementById('password').value;
-  var errorEl = document.getElementById('errorMsg');
   var btn = document.getElementById('loginBtn');
 
-  if (!email || !password) {
-    errorEl.textContent = 'Please enter your email and password.';
-    errorEl.style.display = 'block';
-    return;
-  }
+  if (!email || !password) { showError('Please enter your email and password.'); return; }
 
-  errorEl.style.display = 'none';
+  document.getElementById('errorMsg').style.display = 'none';
   btn.disabled = true;
   btn.textContent = 'Signing in...';
 
   supabase.auth.signInWithPassword({ email: email, password: password })
     .then(function(result) {
       if (result.error) {
-        errorEl.textContent = 'Invalid email or password. Please try again.';
-        errorEl.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Sign in';
+        showError('Invalid email or password. Please try again.');
+        resetButton();
         return;
       }
       redirectByRole();
+    })
+    .catch(function(err) {
+      showError('Network error: ' + (err.message || 'unknown'));
+      resetButton();
     });
 }
 
