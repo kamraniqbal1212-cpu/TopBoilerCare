@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Top Boiler Care Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --black: #0a0a0a; --black-light: #141414; --black-card: #1a1a1a;
+  --yellow: #f5c518; --yellow-hover: #ffd740; --yellow-dim: rgba(245,197,24,0.08);
+  --blue: #2d7ff9; --white: #ffffff; --gray-100: #f5f5f5; --gray-200: #e0e0e0;
+  --gray-400: #9e9e9e; --gray-600: #6b6b6b; --gray-800: #333333;
+  --radius: 10px; --radius-lg: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.12);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --sidebar: 260px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: var(--gray-800); min-height: 100vh; }
+/* SIDEBAR */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar);
+  background: var(--black); padding: 28px 20px;
+  display: flex; flex-direction: column; z-index: 100;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--white); margin-bottom: 4px; }
+.sidebar-logo span { color: var(--yellow); }
+.sidebar-role { font-size: 0.78rem; color: var(--gray-600); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.08em; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius);
+  color: var(--gray-400); font-size: 0.9rem; font-weight: 500;
+  cursor: pointer; transition: all var(--transition); margin-bottom: 4px;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--white); }
+.nav-item.active { background: var(--yellow-dim); color: var(--yellow); }
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.sidebar-bottom { margin-top: auto; }
+.btn-signout {
+  width: 100%; padding: 10px 14px; background: none;
+  border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius);
+  color: var(--gray-400); font-size: 0.88rem; cursor: pointer;
+  transition: all var(--transition); font-family: 'DM Sans', sans-serif;
+}
+.btn-signout:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
+/* MAIN */
+.main { margin-left: var(--sidebar); padding: 32px; min-height: 100vh; }
+.page-header { margin-bottom: 28px; }
+.page-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.6rem; color: var(--black); font-weight: 800; letter-spacing: -0.02em; }
+.page-subtitle { font-size: 0.9rem; color: var(--gray-600); margin-top: 4px; }
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); padding: 24px 20px;
+}
+.stat-label { font-size: 0.8rem; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.stat-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2rem; font-weight: 800; color: var(--black); }
+.stat-value.yellow { color: var(--yellow); }
+.stat-value.blue { color: var(--blue); }
+.stat-value.red { color: #ef4444; }
+/* SECTIONS */
+.section { display: none; }
+.section.active { display: block; }
+/* CARDS */
+.card {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.card-header {
+  padding: 20px 24px; border-bottom: 1px solid var(--gray-200);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: var(--black); }
+/* TABLE */
+table { width: 100%; border-collapse: collapse; }
+th { padding: 12px 16px; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.06em; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); }
+td { padding: 14px 16px; font-size: 0.9rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gray-100); }
+/* BADGES */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
+.badge-scheduled { background: rgba(45,127,249,0.1); color: var(--blue); }
+.badge-completed { background: rgba(34,197,94,0.1); color: #16a34a; }
+.badge-unpaid { background: rgba(239,68,68,0.1); color: #ef4444; }
+.badge-paid { background: rgba(34,197,94,0.1); color: #16a34a; }
+/* BUTTONS */
+.btn { padding: 8px 16px; border-radius: var(--radius); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all var(--transition); font-family: 'DM Sans', sans-serif; border: none; }
+.btn-primary { background: var(--yellow); color: var(--black); }
+.btn-primary:hover { background: var(--yellow-hover); }
+.btn-sm { padding: 5px 12px; font-size: 0.8rem; }
+.btn-ghost { background: var(--gray-100); color: var(--gray-800); }
+.btn-ghost:hover { background: var(--gray-200); }
+.btn-danger { background: rgba(239,68,68,0.1); color: #ef4444; }
+.btn-danger:hover { background: rgba(239,68,68,0.2); }
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; justify-content: center; align-items: center; padding: 24px; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--white); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.18); }
+.modal-header { padding: 24px 28px 0; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 700; }
+.modal-close { background: var(--gray-100); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: var(--gray-200); }
+.modal-body { padding: 24px 28px 28px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 0.83rem; font-weight: 600; color: var(--gray-800); margin-bottom: 6px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 11px 14px; border: 1px solid var(--gray-200);
+  border-radius: var(--radius); font-size: 0.92rem; font-family: 'DM Sans', sans-serif;
+  color: var(--gray-800); background: var(--white); transition: border-color var(--transition);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(45,127,249,0.1); }
+.form-group select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%239e9e9e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-actions { display: flex; gap: 10px; margin-top: 4px; }
+.empty-state { padding: 48px 24px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
+.loading { padding: 32px; text-align: center; color: var(--gray-400); }
+.action-btns { display: flex; gap: 6px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div>
+    <div class="sidebar-logo">Top Boiler <span>Care</span></div>
+    <div class="sidebar-role">Admin</div>
+    <button class="nav-item active" onclick="showSection('jobs')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Jobs
+    </button>
+    <button class="nav-item" onclick="showSection('agencies')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Agencies
+    </button>
+    <button class="nav-item" onclick="showSection('engineers')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Engineers
+    </button>
+    <button class="nav-item" onclick="showSection('invoices')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Invoices
+    </button>
+  </div>
+  <div class="sidebar-bottom">
+    <button class="btn-signout" onclick="signOut()">Sign out</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- JOBS SECTION -->
+  <div class="section active" id="section-jobs">
+    <div class="page-header">
+      <div class="page-title">Jobs</div>
+      <div class="page-subtitle">All jobs across all agencies</div>
+    </div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-label">Total Jobs</div><div class="stat-value" id="statTotal">-</div></div>
+      <div class="stat-card"><div class="stat-label">Scheduled</div><div class="stat-value blue" id="statScheduled">-</div></div>
+      <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="statCompleted">-</div></div>
+      <div class="stat-card"><div class="stat-label">Unpaid Invoices</div><div class="stat-value red" id="statUnpaid">-</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">All Jobs</span>
+        <button class="btn btn-primary" onclick="openAddJob()">+ Add Job</button>
+      </div>
+      <div id="jobsTable"><div class="loading">Loading jobs...</div></div>
+    </div>
+  </div>
+
+  <!-- AGENCIES SECTION -->
+  <div class="section" id="section-agencies">
+    <div class="page-header">
+      <div class="page-title">Agencies</div>
+      <div class="page-subtitle">Manage agency accounts</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">All Agencies</span>
+        <button class="btn btn-primary" onclick="openAddAgency()">+ Add Agency</button>
+      </div>
+      <div id="agenciesTable"><div class="loading">Loading agencies...</div></div>
+    </div>
+  </div>
+
+  <!-- ENGINEERS SECTION -->
+  <div class="section" id="section-engineers">
+    <div class="page-header">
+      <div class="page-title">Engineers</div>
+      <div class="page-subtitle">Manage engineer accounts</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">All Engineers</span>
+        <button class="btn btn-primary" onclick="openAddEngineer()">+ Add Engineer</button>
+      </div>
+      <div id="engineersTable"><div class="loading">Loading engineers...</div></div>
+    </div>
+  </div>
+
+  <!-- INVOICES SECTION -->
+  <div class="section" id="section-invoices">
+    <div class="page-header">
+      <div class="page-title">Invoices</div>
+      <div class="page-subtitle">Track all invoice payments</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">All Invoices</span>
+      </div>
+      <div id="invoicesTable"><div class="loading">Loading invoices...</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD JOB MODAL -->
+<div class="modal-overlay" id="addJobModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="jobModalTitle">Add New Job</h3>
+      <button class="modal-close" onclick="closeModal('addJobModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="jobId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Agency *</label>
+          <select id="jobAgency"></select>
+        </div>
+        <div class="form-group">
+          <label>Engineer</label>
+          <select id="jobEngineer"><option value="">Unassigned</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Property Address *</label>
+        <input type="text" id="jobAddress" placeholder="123 Example Street, London, E1 1AA">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tenant Name</label>
+          <input type="text" id="jobTenantName" placeholder="John Smith">
+        </div>
+        <div class="form-group">
+          <label>Tenant Phone</label>
+          <input type="tel" id="jobTenantPhone" placeholder="07123 456789">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Job Type *</label>
+          <select id="jobType">
+            <option value="CP12">CP12</option>
+            <option value="repair">Repair</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Job Date</label>
+          <input type="date" id="jobDate">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (£)</label>
+          <input type="number" id="jobPrice" placeholder="60">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="jobStatus">
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Invoice Status</label>
+        <select id="jobInvoiceStatus">
+          <option value="unpaid">Unpaid</option>
+          <option value="paid">Paid</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Upload Invoice PDF</label>
+        <input type="file" id="jobInvoiceFile" accept="application/pdf">
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="jobNotes" placeholder="Any additional notes..."></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveJob()" id="saveJobBtn">Save Job</button>
+        <button class="btn btn-ghost" onclick="closeModal('addJobModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD AGENCY MODAL -->
+<div class="modal-overlay" id="addAgencyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Agency</h3>
+      <button class="modal-close" onclick="closeModal('addAgencyModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Agency Name *</label>
+        <input type="text" id="agencyName" placeholder="Smith & Co Estate Agents">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Contact Name</label>
+          <input type="text" id="agencyContact" placeholder="Jane Smith">
+        </div>
+        <div class="form-group">
+          <label>Contact Phone</label>
+          <input type="tel" id="agencyPhone" placeholder="020 7123 4567">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Contact Email</label>
+        <input type="email" id="agencyEmail" placeholder="jane@smithco.com">
+      </div>
+      <div class="form-group">
+        <label>Portal Login Email (for agency access)</label>
+        <input type="email" id="agencyLoginEmail" placeholder="portal@smithco.com">
+      </div>
+      <div class="form-group">
+        <label>Portal Password</label>
+        <input type="password" id="agencyLoginPassword" placeholder="Set a password for them">
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveAgency()" id="saveAgencyBtn">Add Agency</button>
+        <button class="btn btn-ghost" onclick="closeModal('addAgencyModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ENGINEER MODAL -->
+<div class="modal-overlay" id="addEngineerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Engineer</h3>
+      <button class="modal-close" onclick="closeModal('addEngineerModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="engName" placeholder="John Smith">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" id="engPhone" placeholder="07123 456789">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Gas Safe Number</label>
+        <input type="text" id="engGasSafe" placeholder="123456">
+      </div>
+      <div class="form-group">
+        <label>Login Email</label>
+        <input type="email" id="engEmail" placeholder="engineer@example.com">
+      </div>
+      <div class="form-group">
+        <label>Login Password</label>
+        <input type="password" id="engPassword" placeholder="Set a password">
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveEngineer()" id="saveEngineerBtn">Add Engineer</button>
+        <button class="btn btn-ghost" onclick="closeModal('addEngineerModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var SUPABASE_URL = 'https://metssgddcebwfmpfeipj.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ldHNzZ2RkY2Vid2ZtcGZlaXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTU0MDgsImV4cCI6MjA5MjE5MTQwOH0.xwNi1fuQMQD1q-iLHBbmsbCdGAHWY0BD-Al9_2mt4L8';
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var agencies = [];
+var engineers = [];
+
+// Auth check
+supabase.auth.getSession().then(function(res) {
+  if (!res.data.session) { window.location.href = '/portal/index.html'; return; }
+  supabase.from('profiles').select('role').eq('id', res.data.session.user.id).single()
+    .then(function(r) {
+      if (!r.data || r.data.role !== 'admin') { window.location.href = '/portal/index.html'; }
+      else { loadAll(); }
+    });
+});
+
+function loadAll() {
+  loadJobs();
+  loadAgencies();
+  loadEngineers();
+}
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('section-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'invoices') loadInvoices();
+}
+
+// JOBS
+function loadJobs() {
+  supabase.from('jobs').select('*, agencies(name), engineers(full_name)').order('created_at', { ascending: false })
+    .then(function(res) {
+      if (res.error) { document.getElementById('jobsTable').innerHTML = '<div class="empty-state">Error loading jobs.</div>'; return; }
+      var jobs = res.data;
+      document.getElementById('statTotal').textContent = jobs.length;
+      document.getElementById('statScheduled').textContent = jobs.filter(function(j) { return j.status === 'scheduled'; }).length;
+      document.getElementById('statCompleted').textContent = jobs.filter(function(j) { return j.status === 'completed'; }).length;
+      document.getElementById('statUnpaid').textContent = jobs.filter(function(j) { return j.invoice_status === 'unpaid' && j.status === 'completed'; }).length;
+      if (!jobs.length) { document.getElementById('jobsTable').innerHTML = '<div class="empty-state">No jobs yet. Add your first job.</div>'; return; }
+      var html = '<table><thead><tr><th>Address</th><th>Agency</th><th>Engineer</th><th>Type</th><th>Date</th><th>Price</th><th>Status</th><th>Invoice</th><th>Certificate</th><th>Actions</th></tr></thead><tbody>';
+      jobs.forEach(function(j) {
+        html += '<tr>';
+        html += '<td>' + (j.property_address || '-') + '</td>';
+        html += '<td>' + (j.agencies ? j.agencies.name : '-') + '</td>';
+        html += '<td>' + (j.engineers ? j.engineers.full_name : 'Unassigned') + '</td>';
+        html += '<td>' + j.job_type + '</td>';
+        html += '<td>' + (j.job_date || '-') + '</td>';
+        html += '<td>' + (j.price ? '£' + j.price : '-') + '</td>';
+        html += '<td><span class="badge badge-' + j.status + '">' + j.status + '</span></td>';
+        html += '<td><span class="badge badge-' + j.invoice_status + '">' + j.invoice_status + '</span></td>';
+        html += '<td>' + (j.certificate_url ? '<a href="' + j.certificate_url + '" target="_blank" class="btn btn-sm btn-ghost">View</a>' : '-') + '</td>';
+        html += '<td><div class="action-btns">';
+        html += '<button class="btn btn-sm btn-ghost" onclick=\'editJob(' + JSON.stringify(j).replace(/'/g, "\\'") + ')\'>Edit</button>';
+        if (j.invoice_status === 'unpaid' && j.status === 'completed') {
+          html += '<button class="btn btn-sm btn-primary" onclick="markPaid(\'' + j.id + '\')">Mark Paid</button>';
+        }
+        html += '</div></td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('jobsTable').innerHTML = html;
+    });
+}
+
+function openAddJob() {
+  document.getElementById('jobModalTitle').textContent = 'Add New Job';
+  document.getElementById('jobId').value = '';
+  document.getElementById('jobAddress').value = '';
+  document.getElementById('jobTenantName').value = '';
+  document.getElementById('jobTenantPhone').value = '';
+  document.getElementById('jobDate').value = '';
+  document.getElementById('jobPrice').value = '';
+  document.getElementById('jobNotes').value = '';
+  document.getElementById('jobType').value = 'CP12';
+  document.getElementById('jobStatus').value = 'scheduled';
+  document.getElementById('jobInvoiceStatus').value = 'unpaid';
+  populateSelects();
+  openModal('addJobModal');
+}
+
+function editJob(j) {
+  document.getElementById('jobModalTitle').textContent = 'Edit Job';
+  document.getElementById('jobId').value = j.id;
+  document.getElementById('jobAddress').value = j.property_address || '';
+  document.getElementById('jobTenantName').value = j.tenant_name || '';
+  document.getElementById('jobTenantPhone').value = j.tenant_phone || '';
+  document.getElementById('jobDate').value = j.job_date || '';
+  document.getElementById('jobPrice').value = j.price || '';
+  document.getElementById('jobNotes').value = j.notes || '';
+  document.getElementById('jobType').value = j.job_type;
+  document.getElementById('jobStatus').value = j.status;
+  document.getElementById('jobInvoiceStatus').value = j.invoice_status;
+  populateSelects(j.agency_id, j.engineer_id);
+  openModal('addJobModal');
+}
+
+function populateSelects(selectedAgency, selectedEngineer) {
+  var agencySelect = document.getElementById('jobAgency');
+  agencySelect.innerHTML = '<option value="">Select agency</option>';
+  agencies.forEach(function(a) {
+    agencySelect.innerHTML += '<option value="' + a.id + '"' + (selectedAgency === a.id ? ' selected' : '') + '>' + a.name + '</option>';
+  });
+  var engSelect = document.getElementById('jobEngineer');
+  engSelect.innerHTML = '<option value="">Unassigned</option>';
+  engineers.forEach(function(e) {
+    engSelect.innerHTML += '<option value="' + e.id + '"' + (selectedEngineer === e.id ? ' selected' : '') + '>' + e.full_name + '</option>';
+  });
+}
+
+function saveJob() {
+  var btn = document.getElementById('saveJobBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  var jobId = document.getElementById('jobId').value;
+  var invoiceFile = document.getElementById('jobInvoiceFile').files[0];
+
+  var data = {
+    agency_id: document.getElementById('jobAgency').value || null,
+    engineer_id: document.getElementById('jobEngineer').value || null,
+    property_address: document.getElementById('jobAddress').value.trim(),
+    tenant_name: document.getElementById('jobTenantName').value.trim() || null,
+    tenant_phone: document.getElementById('jobTenantPhone').value.trim() || null,
+    job_type: document.getElementById('jobType').value,
+    job_date: document.getElementById('jobDate').value || null,
+    price: document.getElementById('jobPrice').value || null,
+    status: document.getElementById('jobStatus').value,
+    invoice_status: document.getElementById('jobInvoiceStatus').value,
+    notes: document.getElementById('jobNotes').value.trim() || null
+  };
+
+  if (!data.property_address) { alert('Property address is required.'); btn.disabled = false; btn.textContent = 'Save Job'; return; }
+
+  function doSave(invoiceUrl) {
+    if (invoiceUrl) data.invoice_url = invoiceUrl;
+    var query = jobId
+      ? supabase.from('jobs').update(data).eq('id', jobId)
+      : supabase.from('jobs').insert(data);
+    query.then(function(res) {
+      btn.disabled = false; btn.textContent = 'Save Job';
+      if (res.error) { alert('Error saving job: ' + res.error.message); return; }
+      closeModal('addJobModal');
+      loadJobs();
+    });
+  }
+
+  if (invoiceFile) {
+    var path = 'invoices/' + Date.now() + '_' + invoiceFile.name;
+    supabase.storage.from('invoices').upload(path, invoiceFile)
+      .then(function(res) {
+        if (res.error) { alert('Error uploading invoice: ' + res.error.message); btn.disabled = false; btn.textContent = 'Save Job'; return; }
+        var url = supabase.storage.from('invoices').getPublicUrl(path).data.publicUrl;
+        doSave(url);
+      });
+  } else {
+    doSave(null);
+  }
+}
+
+function markPaid(jobId) {
+  supabase.from('jobs').update({ invoice_status: 'paid' }).eq('id', jobId)
+    .then(function() { loadJobs(); });
+}
+
+// AGENCIES
+function loadAgencies() {
+  supabase.from('agencies').select('*').order('name')
+    .then(function(res) {
+      agencies = res.data || [];
+      if (!agencies.length) { document.getElementById('agenciesTable').innerHTML = '<div class="empty-state">No agencies yet.</div>'; return; }
+      var html = '<table><thead><tr><th>Name</th><th>Contact</th><th>Email</th><th>Phone</th></tr></thead><tbody>';
+      agencies.forEach(function(a) {
+        html += '<tr><td>' + a.name + '</td><td>' + (a.contact_name || '-') + '</td><td>' + (a.contact_email || '-') + '</td><td>' + (a.contact_phone || '-') + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('agenciesTable').innerHTML = html;
+    });
+}
+
+function openAddAgency() { openModal('addAgencyModal'); }
+
+function saveAgency() {
+  var btn = document.getElementById('saveAgencyBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  var name = document.getElementById('agencyName').value.trim();
+  var loginEmail = document.getElementById('agencyLoginEmail').value.trim();
+  var loginPassword = document.getElementById('agencyLoginPassword').value;
+  if (!name) { alert('Agency name is required.'); btn.disabled = false; btn.textContent = 'Add Agency'; return; }
+
+  supabase.from('agencies').insert({
+    name: name,
+    contact_name: document.getElementById('agencyContact').value.trim() || null,
+    contact_email: document.getElementById('agencyEmail').value.trim() || null,
+    contact_phone: document.getElementById('agencyPhone').value.trim() || null
+  }).select().then(function(res) {
+    if (res.error) { alert('Error: ' + res.error.message); btn.disabled = false; btn.textContent = 'Add Agency'; return; }
+    var agencyId = res.data[0].id;
+    if (loginEmail && loginPassword) {
+      supabase.auth.admin.createUser({ email: loginEmail, password: loginPassword, email_confirm: true })
+        .then(function(userRes) {
+          if (userRes.error) { alert('Agency added but portal login failed: ' + userRes.error.message); }
+          else {
+            supabase.from('profiles').insert({ id: userRes.data.user.id, full_name: name, role: 'agency', agency_id: agencyId }).then(function() {});
+          }
+          btn.disabled = false; btn.textContent = 'Add Agency';
+          closeModal('addAgencyModal'); loadAgencies();
+        });
+    } else {
+      btn.disabled = false; btn.textContent = 'Add Agency';
+      closeModal('addAgencyModal'); loadAgencies();
+    }
+  });
+}
+
+// ENGINEERS
+function loadEngineers() {
+  supabase.from('engineers').select('*').order('full_name')
+    .then(function(res) {
+      engineers = res.data || [];
+      if (!engineers.length) { document.getElementById('engineersTable').innerHTML = '<div class="empty-state">No engineers yet.</div>'; return; }
+      var html = '<table><thead><tr><th>Name</th><th>Phone</th><th>Gas Safe No.</th></tr></thead><tbody>';
+      engineers.forEach(function(e) {
+        html += '<tr><td>' + e.full_name + '</td><td>' + (e.phone || '-') + '</td><td>' + (e.gas_safe_number || '-') + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('engineersTable').innerHTML = html;
+    });
+}
+
+function openAddEngineer() { openModal('addEngineerModal'); }
+
+function saveEngineer() {
+  var btn = document.getElementById('saveEngineerBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  var name = document.getElementById('engName').value.trim();
+  var email = document.getElementById('engEmail').value.trim();
+  var password = document.getElementById('engPassword').value;
+  if (!name) { alert('Name is required.'); btn.disabled = false; btn.textContent = 'Add Engineer'; return; }
+
+  supabase.auth.admin.createUser({ email: email, password: password, email_confirm: true })
+    .then(function(userRes) {
+      if (userRes.error) { alert('Error creating login: ' + userRes.error.message); btn.disabled = false; btn.textContent = 'Add Engineer'; return; }
+      var userId = userRes.data.user.id;
+      supabase.from('profiles').insert({ id: userId, full_name: name, role: 'engineer' })
+        .then(function() {
+          supabase.from('engineers').insert({
+            user_id: userId,
+            full_name: name,
+            phone: document.getElementById('engPhone').value.trim() || null,
+            gas_safe_number: document.getElementById('engGasSafe').value.trim() || null
+          }).then(function() {
+            btn.disabled = false; btn.textContent = 'Add Engineer';
+            closeModal('addEngineerModal'); loadEngineers();
+          });
+        });
+    });
+}
+
+// INVOICES
+function loadInvoices() {
+  supabase.from('jobs').select('*, agencies(name)').not('invoice_url', 'is', null).order('created_at', { ascending: false })
+    .then(function(res) {
+      var jobs = res.data || [];
+      if (!jobs.length) { document.getElementById('invoicesTable').innerHTML = '<div class="empty-state">No invoices yet.</div>'; return; }
+      var html = '<table><thead><tr><th>Address</th><th>Agency</th><th>Date</th><th>Price</th><th>Invoice</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+      jobs.forEach(function(j) {
+        html += '<tr>';
+        html += '<td>' + j.property_address + '</td>';
+        html += '<td>' + (j.agencies ? j.agencies.name : '-') + '</td>';
+        html += '<td>' + (j.job_date || '-') + '</td>';
+        html += '<td>' + (j.price ? '£' + j.price : '-') + '</td>';
+        html += '<td><a href="' + j.invoice_url + '" target="_blank" class="btn btn-sm btn-ghost">View PDF</a></td>';
+        html += '<td><span class="badge badge-' + j.invoice_status + '">' + j.invoice_status + '</span></td>';
+        html += '<td>';
+        if (j.invoice_status === 'unpaid') {
+          html += '<button class="btn btn-sm btn-primary" onclick="markPaid(\'' + j.id + '\')">Mark Paid</button>';
+        }
+        html += '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('invoicesTable').innerHTML = html;
+    });
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function signOut() { supabase.auth.signOut().then(function() { window.location.href = '/portal/index.html'; }); }
+
+window.addEventListener('click', function(e) {
+  ['addJobModal','addAgencyModal','addEngineerModal'].forEach(function(id) {
+    if (e.target === document.getElementById(id)) closeModal(id);
+  });
+});
+</script>
+</body>
+</html>
